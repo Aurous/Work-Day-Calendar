@@ -1,25 +1,27 @@
 <script setup lang="ts">
-import { CalendarDate } from '@internationalized/date'
+    import { DateTime } from 'luxon';
+    import { parseDate } from '@internationalized/date'
 
-const value = ref(new CalendarDate(2022, 2, 9));
+    const date = ref(DateTime.now());
+
+const calendarDate = ref(parseDate(DateTime.now().toFormat('yyyy-LL-dd')));
 </script>
 
 <template>
-    <UCard>
-        <template #header>
-            <USkeleton class="h-8 w-[250px]" />
-        </template>
-
-        <template #default>
-            <UContainer class="grid grid-cols-3 gap-4">
-
-                <UCalendar v-model="value" />
-                <UCalendar v-model="value" />
-            </UContainer>
-        </template>
-
-        <template #footer>
-            <USkeleton class="h-8 w-[250px]" />
-        </template>
-    </UCard>
+    <div class="h-dvh w-full grid grid-cols-3 grid-rows-12 gap-4">
+        <div class="row-span-12 col-span-2">
+            <h3 class="bg-white text-black text-center">{{ date }}</h3>
+        </div>
+        <div class="row-span-12">
+            day view
+        </div>
+        <div class="col-span-2 grid grid-cols-2 gap-4">
+            <div class="">
+                to do list
+            </div>
+            <div class="">
+                <UCalendar v-model="calendarDate" />
+            </div>
+        </div>
+    </div>
 </template>
