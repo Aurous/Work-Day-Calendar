@@ -1,29 +1,24 @@
 <script setup lang="ts">
     import { DateTime } from 'luxon';
-    import { parseDate } from '@internationalized/date'
+    // import { parseDate } from '@internationalized/date'
 
     const date = ref(DateTime.now());
 
-const calendarDate = ref(parseDate(DateTime.now().toFormat('yyyy-LL-dd')));
+    // const calendarDate = ref(parseDate(DateTime.now().toFormat('yyyy-LL-dd')));
 </script>
 
 <template>
-    <div class="h-dvh w-full grid grid-cols-3 gap-4">
-        <div class="col-span-2">
-            <div class="h-fill w-full grid grid-cols-2 gap-4">
-                <h3 class="col-span-2 bg-white text-black text-center">{{ date }}</h3>
-                    <div class="col-span-1 ">
-                        to do list
-                    </div>
-                    <div class="col-span-1">
-                        <UCalendar v-model="calendarDate" />
-                    </div>
+    <div class="h-dvh w-full auto-cols-auto grid grid-cols-2 gap-4">
+        <div class="h-fill">
+            <div class="h-1/6 bg-white text-black text-center">
+                <h1>{{ date.toFormat('yyyy-LL-dd') }}</h1>
+            </div>
+            <div class="h-5/6">
+                to do list
             </div>
         </div>
-        <div class="col-span-1">
-            <div>
-                day view
-            </div>
+        <div class="h-fill">
+            day view
         </div>
     </div>
 </template>
