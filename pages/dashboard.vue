@@ -36,9 +36,9 @@
         const duration = endHour - startHour;
 
         // will probably move this calculation to be on a table so that everything scales better
-        const top = (startHour / 12) * 100;
+        const top = (startHour / 12) * 50;
         // will need to fix the formatting to not be hard coded
-        const height = (duration / 12) * 100;
+        const height = (duration / 12) * 50;
 
         return {
             top: `${top}%`,
@@ -80,7 +80,7 @@
                     </div>
                 </div>
                 <div class="ml-16 h-full relative">
-                    <div v-for="hour in 24" :key="hour" class="h-[calc(100%/12)] border-b" />
+                    <div v-for="hour in totalHours" :key="hour" class="h-[calc(100%/12)] border-b" />
                     <div 
                         v-for="event in events" 
                         :key="event.id" 
