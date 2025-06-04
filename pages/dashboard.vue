@@ -3,6 +3,9 @@
 
     const date = ref(DateTime.now());
 
+    const startingHour = 9;
+    const totalHours = 12;
+
     const events = [
         {
             id: 1,
@@ -32,9 +35,10 @@
         const endHour = end.getHours() + end.getMinutes() / 60;
         const duration = endHour - startHour;
 
-        const top = (startHour / 24) * 100;
+        // will probably move this calculation to be on a table so that everything scales better
+        const top = (startHour / 12) * 100;
         // will need to fix the formatting to not be hard coded
-        const height = (duration / 24) * 100;
+        const height = (duration / 12) * 100;
 
         return {
             top: `${top}%`,
@@ -71,13 +75,12 @@
         <div class="h-full">
             <div class="relative h-full">
                 <div class="absolute left-0 top-0 w-16 h-full border-r">
-                    <div v-for="hour in 24" :key="hour" class="h-[calc(100%/24)] border-b text-right text-sm pr-2 py-1">
-                        {{ (hour - 1 + 24) % 12 || 12 }}:00{{ hour < 12 ? "AM" : "PM" }} 
-                        <!-- will need to tweak hours based on working hours -->
+                    <div v-for="hour in totalHours" :key="hour" class="h-[calc(100%/12)] border-b text-right text-xs">
+                        {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`, 'T').toFormat('t') }} 
                     </div>
                 </div>
                 <div class="ml-16 h-full relative">
-                    <div v-for="hour in 24" :key="hour" class="h-[calc(100%/24)] border-b" />
+                    <div v-for="hour in 24" :key="hour" class="h-[calc(100%/12)] border-b" />
                     <div 
                         v-for="event in events" 
                         :key="event.id" 
