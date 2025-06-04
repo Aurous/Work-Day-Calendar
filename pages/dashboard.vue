@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 
 const date = ref(DateTime.now());
 
-const startingHour = 7;
+const startingHour = 8;
 const totalHours = 12;
 const splitPeriod = 4;
 const totalTime = totalHours * splitPeriod;
@@ -86,7 +86,7 @@ function formatTime(datetime) {
                 to do list
             </div>
         </div>
-        <div class="grid grid-cols-1 pt-10">
+        <div class="grid grid-cols-1">
             <div class="col-start-1 row-start-1">
                 <div :class="['h-full', 'grid', `grid-rows-${totalHours}`, 'grid-cols-1']">
                     <div v-for="hour in totalHours" :key="hour" class="border-t flex place-items-center">
