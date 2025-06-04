@@ -7,66 +7,6 @@ const startingHour = 9;
 const totalHours = 12;
 const totalTime = totalHours * 4;
 
-const test = [
-    'row-span-0',
-    'row-span-1',
-    'row-span-2',
-    'row-span-3',
-    'row-span-4'
-]
-
-const houring = [
-    'row-start-0',
-    'row-start-1',
-    'row-start-2',
-    'row-start-3',
-    'row-start-4',
-    'row-start-5',
-    'row-start-6',
-    'row-start-7',
-    'row-start-8',
-    'row-start-9',
-    'row-start-10',
-    'row-start-11',
-    'row-start-12',
-    'row-start-13',
-    'row-start-14',
-    'row-start-15',
-    'row-start-16',
-    'row-start-17',
-    'row-start-18',
-    'row-start-19',
-    'row-start-20',
-    'row-start-21',
-    'row-start-22',
-    'row-start-23',
-    'row-start-24',
-    'row-start-25',
-    'row-start-26',
-    'row-start-27',
-    'row-start-28',
-    'row-start-29',
-    'row-start-30',
-    'row-start-31',
-    'row-start-32',
-    'row-start-33',
-    'row-start-34',
-    'row-start-35',
-    'row-start-36',
-    'row-start-37',
-    'row-start-38',
-    'row-start-39',
-    'row-start-40',
-    'row-start-41',
-    'row-start-42',
-    'row-start-43',
-    'row-start-44',
-    'row-start-45',
-    'row-start-46',
-    'row-start-47',
-    'row-start-48',
-]
-
 const events = [
     {
         id: 1,
@@ -107,8 +47,10 @@ function getEventClass(event) {
         'text-white',
         'text-sm',
         'col-start-1',
-        houring[startHour],
-        test[duration]
+        // houring[startHour],
+        `row-start-${startHour}`,
+        // test[duration]
+        `row-span-${duration}`
     ];
 }
 
