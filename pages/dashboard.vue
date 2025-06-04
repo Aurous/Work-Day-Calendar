@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 
 const date = ref(DateTime.now());
 
-const startingHour = 8;
+const startingHour = 9;
 const totalHours = 12;
 const splitPeriod = 4;
 const totalTime = totalHours * splitPeriod;
@@ -35,7 +35,7 @@ const events = [
     }
 ];
 
-function getEventClass(event) {
+function getEventStyle(event) {
     const { startDT, endDT } = event;
 
     const start = DateTime.fromISO(startDT, { zone: DateTime.local().zoneName });
@@ -46,19 +46,29 @@ function getEventClass(event) {
 
     const duration = end.diff(start, ['hour']).toObject().hours * splitPeriod;
 
-    return [
-        'col-start-2', // fix this
-        `row-start-${startHour}`,
-        `row-span-${duration}`
-    ];
+    return {
+        gridColumnStart: 2,
+        gridRow: `${startHour} / span ${duration}`
+    }
 }
 
-function getGridClass (_events) {
-    // fix this
-    return [
-        `grid-rows-${totalTime}`,
-        'grid-cols-6'
-    ]
+function getHoursStyle() {
+    return { 
+        gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))` 
+    }
+}
+
+function getHourStyle() {
+    return {
+        gridRow: `span ${splitPeriod}`
+    }
+}
+
+function getScheduleStyle() {
+    return {
+        gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))`,
+        gridTemplateColumns: 6
+    }
 }
 
 function formatTime(datetime) {
@@ -86,26 +96,21 @@ function formatTime(datetime) {
                 to do list
             </div>
         </div>
-        <div class="grid grid-cols-1">
+        <div class="h-full grid grid-cols-1">
             <div class="col-start-1 row-start-1">
-                <div :class="['h-full', 'grid', `grid-rows-${totalHours}`, 'grid-cols-1']">
-                    <div v-for="hour in totalHours" :key="hour" class="border-t flex place-items-center">
+                <div class="h-full grid" :style="getHoursStyle()">
+                    <div v-for="hour in totalHours" :key="hour" class="border-t flex place-items-center" :style="getHourStyle()">
                         <div class="self-start">
-                            {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`, 'T').toFormat('t') }}
+                            {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`,
+                            'T').toFormat('t') }}
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-start-1 row-start-1">
-                <div 
-                    class="h-full grid" 
-                    :class="getGridClass(events)"
-                >
-                    <div 
-                        v-for="event in events" :key="event.id"
-                        class="bg-blue-500 text-white text-sm col-span-2 border" 
-                        :class="getEventClass(event)"
-                    >
+                <div class="h-full grid" :style="getScheduleStyle()">
+                    <div v-for="event in events" :key="event.id"
+                        class="bg-blue-500 text-white text-sm col-span-2 border" :style="getEventStyle(event)">
                         <div class="font-semibold truncate">{{ event.title }}</div>
                         <div class="text-xs truncate">
                             {{ formatTime(event.startDT) }} - {{ formatTime(event.endDT) }}
