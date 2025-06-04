@@ -5,7 +5,8 @@ const date = ref(DateTime.now());
 
 const startingHour = 9;
 const totalHours = 12;
-const totalTime = totalHours * 4;
+const splitPeriod = 4;
+const totalTime = totalHours * splitPeriod;
 
 const events = [
     {
@@ -35,21 +36,12 @@ function getEventClass(event) {
     const end = DateTime.fromISO(endDT, { zone: DateTime.local().zoneName });
 
     const [hours, minutes] = start.toFormat('H:m').split(':');
-    console.log([hours, minutes]);
     const startHour = ((totalTime * ((((parseInt(hours) * 60) + parseInt(minutes)) / 60) - startingHour)) / totalHours) + 1
-    console.log(startHour);
 
-    const diff = end.diff(start, ['hour']).toObject();
-    const duration = diff.hours * 4;
+    const duration = end.diff(start, ['hour']).toObject().hours * splitPeriod;
 
     return [
-        'bg-blue-500', 
-        'text-white',
-        'text-sm',
-        'col-start-1',
-        // houring[startHour],
         `row-start-${startHour}`,
-        // test[duration]
         `row-span-${duration}`
     ];
 }
@@ -65,13 +57,13 @@ function formatTime(datetime) {
     <div class="h-dvh w-full grid grid-cols-2 gap-2">
         <div class="h-fill">
             <div class="h-1/6 border-b grid grid-cols-2 gap-1 place-items-end">
-                <div class="row-span-2 h-fill w-fill text-9xl self-center">
+                <div class="row-span-2 h-fill w-fill text-8xl self-center">
                     {{ date.toFormat('dd') }}
                 </div>
-                <div class="place-self-start self-end-safe h-fill w-fill text-6xl ">
+                <div class="place-self-start self-end-safe h-fill w-fill text-5xl ">
                     {{ date.toFormat('cccc') }}
                 </div>
-                <div class="place-self-start h-fill w-fill text-2xl">
+                <div class="place-self-start h-fill w-fill text-xl">
                     {{ date.toFormat('LLLL yyyy') }}
                 </div>
             </div>
@@ -90,8 +82,8 @@ function formatTime(datetime) {
                 </div>
             </div>
             <div class="col-start-1 row-start-1">
-                <div :class="['h-full', 'grid', `grid-rows-${totalTime}`, 'grid-cols-1']">
-                    <div v-for="event in events" :key="event.id" :class="getEventClass(event)">
+                <div :class="['h-full', 'grid', `grid-rows-${totalTime}`, 'grid-cols-6']">
+                    <div v-for="event in events" :key="event.id" class="bg-blue-500 text-white text-sm col-start-2 col-span-4 p-2" :class="getEventClass(event)">
                         <div class="font-semibold truncate">{{ event.title }}</div>
                         <div class="text-xs truncate">
                             {{ formatTime(event.startDT) }} - {{ formatTime(event.endDT) }}
