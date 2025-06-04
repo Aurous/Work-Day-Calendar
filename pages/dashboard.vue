@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 
 const date = ref(DateTime.now());
 
-const startingHour = 9;
+const startingHour = 7;
 const totalHours = 12;
 const splitPeriod = 4;
 const totalTime = totalHours * splitPeriod;
@@ -15,6 +15,12 @@ const events = [
         startDT: '2025-06-03T09:30:00',
         endDT: '2025-06-03T10:30:00'
     },
+    // {
+    //     id: 4,
+    //     title: 'Test',
+    //     startDT: '2025-06-03T10:30:00',
+    //     endDT: '2025-06-03T13:30:00'
+    // },
     {
         id: 2,
         title: 'Lunch Break',
@@ -41,9 +47,18 @@ function getEventClass(event) {
     const duration = end.diff(start, ['hour']).toObject().hours * splitPeriod;
 
     return [
+        'col-start-2', // fix this
         `row-start-${startHour}`,
         `row-span-${duration}`
     ];
+}
+
+function getGridClass (_events) {
+    // fix this
+    return [
+        `grid-rows-${totalTime}`,
+        'grid-cols-6'
+    ]
 }
 
 function formatTime(datetime) {
@@ -71,7 +86,7 @@ function formatTime(datetime) {
                 to do list
             </div>
         </div>
-        <div class="grid grid-cols-1">
+        <div class="grid grid-cols-1 pt-10">
             <div class="col-start-1 row-start-1">
                 <div :class="['h-full', 'grid', `grid-rows-${totalHours}`, 'grid-cols-1']">
                     <div v-for="hour in totalHours" :key="hour" class="border-t flex place-items-center">
@@ -82,8 +97,15 @@ function formatTime(datetime) {
                 </div>
             </div>
             <div class="col-start-1 row-start-1">
-                <div :class="['h-full', 'grid', `grid-rows-${totalTime}`, 'grid-cols-6']">
-                    <div v-for="event in events" :key="event.id" class="bg-blue-500 text-white text-sm col-start-2 col-span-4 p-2" :class="getEventClass(event)">
+                <div 
+                    class="h-full grid" 
+                    :class="getGridClass(events)"
+                >
+                    <div 
+                        v-for="event in events" :key="event.id"
+                        class="bg-blue-500 text-white text-sm col-span-2 border" 
+                        :class="getEventClass(event)"
+                    >
                         <div class="font-semibold truncate">{{ event.title }}</div>
                         <div class="text-xs truncate">
                             {{ formatTime(event.startDT) }} - {{ formatTime(event.endDT) }}
