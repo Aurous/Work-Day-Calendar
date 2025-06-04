@@ -75,8 +75,12 @@
                     </div>
                     <div class="ml-16 h-full relative">
                         <div v-for="hour in 24" :key="hour" class="h-[calc(100%/24)] border-b" />
-                        <div v-for="event in events" :key="event.id" class="absolute left-0 w-full px-2"
-                            :style="getEventStyle(event)">
+                        <div 
+                            v-for="event in events" 
+                            :key="event.id" 
+                            class="absolute left-0 w-full px-2"
+                            :style="getEventStyle(event)
+                        ">
                             <div class="bg-blue-500 text-white text-sm rounded p-2 shadow">
                                 <div class="font-semibold truncate">{{ event.title }}</div>
                                 <div class="text-xs truncate">
