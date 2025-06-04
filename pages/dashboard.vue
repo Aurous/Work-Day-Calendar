@@ -70,23 +70,22 @@
         <div class="h-full">
             <div class="relative h-full">
                 <div class="absolute left-0 top-0 w-16 h-full border-r">
-                    <div v-for="hour in 24" :key="hour" class="h-[calc(100%/24)] border-b text-right pr-2 py-1">
-                        {{ (hour - 1 + 24) % 24 }}:00
+                    <div v-for="hour in 24" :key="hour" class="h-[calc(100%/24)] border-b text-right text-sm pr-2 py-1">
+                        {{ (hour - 1 + 24) % 12 || 12 }}:00{{ hour < 12 ? "AM" : "PM" }} </div>
                     </div>
-                </div>
-                <div class="ml-16 h-full relative">
-                    <div v-for="hour in 24" :key="hour" class="h-[calc(100%/24)] border-b" />
-                    <div v-for="event in events" :key="event.id" class="absolute left-0 w-full px-2"
-                        :style="getEventStyle(event)">
-                        <div class="bg-blue-500 text-white text-sm rounded p-2 shadow">
-                            <div class="font-semibold truncate">{{ event.title }}</div>
-                            <div class="text-xs truncate">
-                                {{ formatTime(event.start) }} - {{ formatTime(event.end) }}
+                    <div class="ml-16 h-full relative">
+                        <div v-for="hour in 24" :key="hour" class="h-[calc(100%/24)] border-b" />
+                        <div v-for="event in events" :key="event.id" class="absolute left-0 w-full px-2"
+                            :style="getEventStyle(event)">
+                            <div class="bg-blue-500 text-white text-sm rounded p-2 shadow">
+                                <div class="font-semibold truncate">{{ event.title }}</div>
+                                <div class="text-xs truncate">
+                                    {{ formatTime(event.start) }} - {{ formatTime(event.end) }}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 </template>
