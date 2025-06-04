@@ -105,8 +105,7 @@ function getEventClass(event) {
     return [
         'bg-blue-500', 
         'text-white',
-        'text-sm',  
-        'w-3/4',
+        'text-sm',
         'col-start-1',
         houring[startHour],
         test[duration]
