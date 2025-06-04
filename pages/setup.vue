@@ -72,14 +72,26 @@ function formatTime(datetime) {
                 to do list
             </div>
         </div>
-        <div :class="['h-full', 'grid', `grid-rows-${totalHours*2}`, 'grid-cols-1']">
-            <div v-for="hour in totalHours" :key="hour" :class="[`row-start-${hour}`, 'row-span-2', 'col-start-1', 'border-b']">
-                {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`, 'T').toFormat('t') }}
+        <div class="grid grid-cols-1 gap-1">
+            <div class="col-start-1 row-start-1">
+                <div :class="['h-full', 'grid', `grid-rows-${totalHours}`, 'grid-cols-1']">
+                    <div v-for="hour in totalHours" :key="hour"
+                        :class="[`row-start-${hour}`, 'col-start-1', 'border-b', 'flex', 'place-items-center']">
+                        <div class="self-end">
+                            {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`,
+                                'T').toFormat('t') }}
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="row-start-1 row-span-2 col-start-1 bg-blue-500 text-white text-sm rounded p-2 shadow">
-                <div class="font-semibold truncate">test</div>
-                <div class="text-xs truncate">
-                    10am - 11am
+            <div class="col-start-1 row-start-1">
+                <div v-for="event in events" :key="event.id" class="left-0 w-full px-2" :style="getEventStyle(event)">
+                    <div class="bg-blue-500 text-white text-sm rounded p-2 shadow">
+                        <div class="font-semibold truncate">{{ event.title }}</div>
+                        <div class="text-xs truncate">
+                            {{ formatTime(event.start) }} - {{ formatTime(event.end) }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
