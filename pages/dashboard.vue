@@ -37,19 +37,22 @@
 
         return {
             top: `${top}%`,
-            height: `${height}%`
+            height: `${height}%`,
+            width: '50%' // this will be used for stacking
         };
     }
 
     function formatTime(datetime) {
-        return DateTime.fromISO(datetime);
+        return DateTime
+            .fromISO(datetime, { zone: DateTime.local().zoneName })
+            .toFormat('h:mma');
     }
 </script>
 
 <template>
     <div class="h-dvh w-full auto-cols-auto grid grid-cols-2 gap-4">
         <div class="h-fill">
-            <div class="h-1/6 bg-white text-black grid grid-cols-2 gap-1 place-items-end">
+            <div class="h-1/6 border-b grid grid-cols-2 gap-1 place-items-end">
                 <div class="row-span-2 h-fill w-fill text-9xl self-center">
                     {{ date.toFormat('LL') }}
                 </div>
@@ -64,24 +67,22 @@
                 to do list
             </div>
         </div>
-        <div class="relative h-full overflow-hidden">
-            <div class="absolute left-0 top-0 w-16 h-full border-r">
-                <div v-for="hour in 24" :key="hour" class="h-[calc(100%/24)] border-b bg-white text-black text-xs text-right pr-2 py-1">
-                    {{ (hour - 1 + 24) % 24 }}:00
+        <div class="h-full">
+            <div class="relative h-full">
+                <div class="absolute left-0 top-0 w-16 h-full border-r">
+                    <div v-for="hour in 24" :key="hour" class="h-[calc(100%/24)] border-b text-right pr-2 py-1">
+                        {{ (hour - 1 + 24) % 24 }}:00
+                    </div>
                 </div>
-            </div>
-            <div class="ml-16 h-full relative">
-                <div v-for="hour in 24" :key="hour" class="h-[calc(100%/24)] border-b bg-white" />
-                <div 
-                    v-for="event in events" 
-                    :key="event.id" 
-                    class="absolute left-0 w-full px-2"
-                    :style="getEventStyle(event)
-                ">
-                    <div class="bg-blue-500 text-white text-sm rounded p-2 shadow">
-                        <div class="font-semibold">{{ event.title }}</div>
-                        <div class="text-xs">
-                            {{ formatTime(event.start).toFormat('h:mma') }} - {{ formatTime(event.end).toFormat('hh:mma') }}
+                <div class="ml-16 h-full relative">
+                    <div v-for="hour in 24" :key="hour" class="h-[calc(100%/24)] border-b" />
+                    <div v-for="event in events" :key="event.id" class="absolute left-0 w-full px-2"
+                        :style="getEventStyle(event)">
+                        <div class="bg-blue-500 text-white text-sm rounded p-2 shadow">
+                            <div class="font-semibold truncate">{{ event.title }}</div>
+                            <div class="text-xs truncate">
+                                {{ formatTime(event.start) }} - {{ formatTime(event.end) }}
+                            </div>
                         </div>
                     </div>
                 </div>
