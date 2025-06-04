@@ -124,7 +124,7 @@ function formatTime(datetime) {
         <div class="h-fill">
             <div class="h-1/6 border-b grid grid-cols-2 gap-1 place-items-end">
                 <div class="row-span-2 h-fill w-fill text-9xl self-center">
-                    {{ date.toFormat('LL') }}
+                    {{ date.toFormat('dd') }}
                 </div>
                 <div class="place-self-start self-end-safe h-fill w-fill text-6xl ">
                     {{ date.toFormat('cccc') }}
