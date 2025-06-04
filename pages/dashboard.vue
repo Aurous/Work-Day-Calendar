@@ -36,9 +36,9 @@
         const duration = endHour - startHour;
 
         // will probably move this calculation to be on a table so that everything scales better
-        const top = (startHour / 12) * 50;
+        const top = ((startHour - startingHour) / totalHours) * 100;
         // will need to fix the formatting to not be hard coded
-        const height = (duration / 12) * 50;
+        const height = (duration / totalHours) * 100;
 
         return {
             top: `${top}%`,
