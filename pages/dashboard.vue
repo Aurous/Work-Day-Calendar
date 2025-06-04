@@ -1,26 +1,22 @@
 <script setup lang="ts">
-import { DateTime } from 'luxon';
+import { DateTime, Interval } from 'luxon';
 
 const date = ref(DateTime.now());
 
-const startingHour = 9;
-const totalHours = 12;
-const splitPeriod = 4;
-const totalTime = totalHours * splitPeriod;
-
-const events = [
+// this will change to a fetch
+const eventsFetched = [
     {
         id: 1,
         title: 'Meeting with Team',
         startDT: '2025-06-03T09:30:00',
         endDT: '2025-06-03T10:30:00'
     },
-    // {
-    //     id: 4,
-    //     title: 'Test',
-    //     startDT: '2025-06-03T10:30:00',
-    //     endDT: '2025-06-03T13:30:00'
-    // },
+    {
+        id: 4,
+        title: 'Test',
+        startDT: '2025-06-03T10:30:00',
+        endDT: '2025-06-03T13:30:00'
+    },
     {
         id: 2,
         title: 'Lunch Break',
@@ -34,6 +30,47 @@ const events = [
         endDT: '2025-06-03T16:00:00'
     }
 ];
+
+const startingHour = 7;
+const totalHours = 12;
+const splitPeriod = 4;
+const totalTime = totalHours * splitPeriod;
+
+const events = eventsFetched.map(event => {
+    const { startDT, endDT } = event;
+
+    const start = DateTime.fromISO(startDT, { zone: DateTime.local().zoneName });
+    const end = DateTime.fromISO(endDT, { zone: DateTime.local().zoneName });
+    const interval = Interval.fromDateTimes(start, end);
+
+    return {
+        ...event,
+        start,
+        end,
+        interval
+    }
+});
+
+function getHoursStyle() {
+    return {
+        gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))`
+    }
+}
+
+function getHourStyle() {
+    return {
+        gridRow: `span ${splitPeriod}`
+    }
+}
+
+function getScheduleStyle(events) {
+    // const overlapping = event1Interval.overlaps(event2Interval);
+
+    return {
+        gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))`,
+        gridTemplateColumns: `repeat(${6}, minmax(0, 1fr))`
+    }
+}
 
 function getEventStyle(event) {
     const { startDT, endDT } = event;
@@ -50,31 +87,6 @@ function getEventStyle(event) {
         gridColumnStart: 2,
         gridRow: `${startHour} / span ${duration}`
     }
-}
-
-function getHoursStyle() {
-    return { 
-        gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))` 
-    }
-}
-
-function getHourStyle() {
-    return {
-        gridRow: `span ${splitPeriod}`
-    }
-}
-
-function getScheduleStyle() {
-    return {
-        gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))`,
-        gridTemplateColumns: 6
-    }
-}
-
-function formatTime(datetime) {
-    return DateTime
-        .fromISO(datetime, { zone: DateTime.local().zoneName })
-        .toFormat('h:mma');
 }
 </script>
 
@@ -108,12 +120,12 @@ function formatTime(datetime) {
                 </div>
             </div>
             <div class="col-start-1 row-start-1">
-                <div class="h-full grid" :style="getScheduleStyle()">
+                <div class="h-full grid" :style="getScheduleStyle(events)">
                     <div v-for="event in events" :key="event.id"
                         class="bg-blue-500 text-white text-sm col-span-2 border" :style="getEventStyle(event)">
                         <div class="font-semibold truncate">{{ event.title }}</div>
                         <div class="text-xs truncate">
-                            {{ formatTime(event.startDT) }} - {{ formatTime(event.endDT) }}
+                            {{ event.start.toFormat('h:mma') }} - {{ event.end.toFormat('h:mma') }}
                         </div>
                     </div>
                 </div>
