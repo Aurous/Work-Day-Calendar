@@ -1,61 +1,61 @@
 <script setup lang="ts">
-    import { DateTime } from 'luxon';
+import { DateTime } from 'luxon';
 
-    const date = ref(DateTime.now());
+const date = ref(DateTime.now());
 
-    const startingHour = 9;
-    const totalHours = 12;
+const startingHour = 9;
+const totalHours = 12;
+const totalTime = totalHours * 4;
 
-    const events = [
-        {
-            id: 1,
-            title: 'Meeting with Team',
-            start: '2025-06-03T09:30:00',
-            end: '2025-06-03T10:30:00'
-        },
-        {
-            id: 2,
-            title: 'Lunch Break',
-            start: '2025-06-03T12:00:00',
-            end: '2025-06-03T13:00:00'
-        },
-        {
-            id: 3,
-            title: 'Design Review',
-            start: '2025-06-03T15:15:00',
-            end: '2025-06-03T16:00:00'
-        }
+const events = [
+    {
+        id: 1,
+        title: 'Meeting with Team',
+        start: '2025-06-03T09:30:00',
+        end: '2025-06-03T10:30:00'
+    },
+    {
+        id: 2,
+        title: 'Lunch Break',
+        start: '2025-06-03T12:00:00',
+        end: '2025-06-03T13:00:00'
+    },
+    {
+        id: 3,
+        title: 'Design Review',
+        start: '2025-06-03T15:15:00',
+        end: '2025-06-03T16:00:00'
+    }
+];
+
+function getEventClass(event) {
+    const start = new Date(event.start);
+    const end = new Date(event.end);
+
+    const startHour = start.getHours() + start.getMinutes() / 60;
+    const endHour = end.getHours() + end.getMinutes() / 60;
+    const duration = endHour - startHour;
+
+    // will probably move this calculation to be on a table so that everything scales better
+    const top = ((startHour - startingHour) / totalHours) * 100;
+    // will need to fix the formatting to not be hard coded
+    const height = (duration / totalHours) * 100;
+
+    return [
+        `row-start-${event.id}`,
+        `row-span-4`
     ];
+}
 
-    function getEventStyle(event) {
-        const start = new Date(event.start);
-        const end = new Date(event.end);
-
-        const startHour = start.getHours() + start.getMinutes() / 60;
-        const endHour = end.getHours() + end.getMinutes() / 60;
-        const duration = endHour - startHour;
-
-        // will probably move this calculation to be on a table so that everything scales better
-        const top = ((startHour - startingHour) / totalHours) * 100;
-        // will need to fix the formatting to not be hard coded
-        const height = (duration / totalHours) * 100;
-
-        return {
-            top: `${top}%`,
-            height: `${height}%`,
-            width: '50%' // this will be used for stacking
-        };
-    }
-
-    function formatTime(datetime) {
-        return DateTime
-            .fromISO(datetime, { zone: DateTime.local().zoneName })
-            .toFormat('h:mma');
-    }
+function formatTime(datetime) {
+    return DateTime
+        .fromISO(datetime, { zone: DateTime.local().zoneName })
+        .toFormat('h:mma');
+}
 </script>
 
 <template>
-    <div class="h-dvh w-full auto-cols-auto grid grid-cols-2 gap-4">
+    <div class="h-dvh w-full auto-cols-auto grid grid-cols-2 gap-4 p-5">
         <div class="h-fill">
             <div class="h-1/6 border-b grid grid-cols-2 gap-1 place-items-end">
                 <div class="row-span-2 h-fill w-fill text-9xl self-center">
@@ -72,21 +72,21 @@
                 to do list
             </div>
         </div>
-        <div class="h-full">
-            <div class="relative h-full">
-                <div class="absolute left-0 top-0 w-16 h-full border-r">
-                    <div v-for="hour in totalHours" :key="hour" class="h-[calc(100%/12)] border-b text-right text-xs">
-                        {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`, 'T').toFormat('t') }} 
+        <div class="grid grid-cols-1 gap-1">
+            <div class="col-start-1 row-start-1">
+                <div :class="['h-full', 'grid', `grid-rows-${totalHours}`, 'grid-cols-1']">
+                    <div v-for="hour in totalHours" :key="hour"
+                        :class="[`row-start-${hour}`, 'col-start-1', 'border-b', 'flex', 'place-items-center']">
+                        <div class="self-end">
+                            {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`,
+                                'T').toFormat('t') }}
+                        </div>
                     </div>
                 </div>
-                <div class="ml-16 h-full relative">
-                    <div v-for="hour in totalHours" :key="hour" class="h-[calc(100%/12)] border-b" />
-                    <div 
-                        v-for="event in events" 
-                        :key="event.id" 
-                        class="absolute left-0 w-full px-2"
-                        :style="getEventStyle(event)
-                    ">
+            </div>
+            <div class="col-start-1 row-start-1">
+                <div :class="['h-full', 'grid', `grid-rows-${totalTime}`, 'grid-cols-1']">
+                    <div v-for="event in events" :key="event.id" :class="getEventClass(event)">
                         <div class="bg-blue-500 text-white text-sm rounded p-2 shadow">
                             <div class="font-semibold truncate">{{ event.title }}</div>
                             <div class="text-xs truncate">
@@ -97,5 +97,5 @@
                 </div>
             </div>
         </div>
-     </div>
+    </div>
 </template>
