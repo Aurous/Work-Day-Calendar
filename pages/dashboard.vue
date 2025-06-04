@@ -7,6 +7,66 @@ const startingHour = 9;
 const totalHours = 12;
 const totalTime = totalHours * 4;
 
+const test = [
+    'row-span-0',
+    'row-span-1',
+    'row-span-2',
+    'row-span-3',
+    'row-span-4'
+]
+
+const houring = [
+    'row-start-0',
+    'row-start-1',
+    'row-start-2',
+    'row-start-3',
+    'row-start-4',
+    'row-start-5',
+    'row-start-6',
+    'row-start-7',
+    'row-start-8',
+    'row-start-9',
+    'row-start-10',
+    'row-start-11',
+    'row-start-12',
+    'row-start-13',
+    'row-start-14',
+    'row-start-15',
+    'row-start-16',
+    'row-start-17',
+    'row-start-18',
+    'row-start-19',
+    'row-start-20',
+    'row-start-21',
+    'row-start-22',
+    'row-start-23',
+    'row-start-24',
+    'row-start-25',
+    'row-start-26',
+    'row-start-27',
+    'row-start-28',
+    'row-start-29',
+    'row-start-30',
+    'row-start-31',
+    'row-start-32',
+    'row-start-33',
+    'row-start-34',
+    'row-start-35',
+    'row-start-36',
+    'row-start-37',
+    'row-start-38',
+    'row-start-39',
+    'row-start-40',
+    'row-start-41',
+    'row-start-42',
+    'row-start-43',
+    'row-start-44',
+    'row-start-45',
+    'row-start-46',
+    'row-start-47',
+    'row-start-48',
+]
+
 const events = [
     {
         id: 1,
@@ -35,17 +95,21 @@ function getEventClass(event) {
     const end = DateTime.fromISO(endDT, { zone: DateTime.local().zoneName });
 
     const [hours, minutes] = start.toFormat('H:m').split(':');
-    console.log([hours, minutes])
-    const startHour = ((parseInt(hours) / 24) + (parseInt(minutes / 60))) * totalTime;
-    console.log(startHour)
+    console.log([hours, minutes]);
+    const startHour = ((totalTime * ((((parseInt(hours) * 60) + parseInt(minutes)) / 60) - startingHour)) / totalHours) + 1
+    console.log(startHour);
 
     const diff = end.diff(start, ['hour']).toObject();
     const duration = diff.hours * 4;
 
     return [
+        'bg-blue-500', 
+        'text-white',
+        'text-sm',  
+        'w-3/4',
         'col-start-1',
-        `row-start-${startHour}`,
-        `row-span-${duration}`
+        houring[startHour],
+        test[duration]
     ];
 }
 
@@ -87,11 +151,9 @@ function formatTime(datetime) {
             <div class="col-start-1 row-start-1">
                 <div :class="['h-full', 'grid', `grid-rows-${totalTime}`, 'grid-cols-1']">
                     <div v-for="event in events" :key="event.id" :class="getEventClass(event)">
-                        <div class="bg-blue-500 text-white text-sm p-1 w-3/4 place-self-end">
-                            <div class="font-semibold truncate">{{ event.title }}</div>
-                            <div class="text-xs truncate">
-                                {{ formatTime(event.startDT) }} - {{ formatTime(event.endDT) }}
-                            </div>
+                        <div class="font-semibold truncate">{{ event.title }}</div>
+                        <div class="text-xs truncate">
+                            {{ formatTime(event.startDT) }} - {{ formatTime(event.endDT) }}
                         </div>
                     </div>
                 </div>
