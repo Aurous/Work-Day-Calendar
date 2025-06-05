@@ -13,7 +13,8 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   nitro: {
     experimental: {
-      websocket: true
+      websocket: true,
+      tasks: true
     }
   }
 })
