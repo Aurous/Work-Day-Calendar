@@ -186,15 +186,17 @@ if (import.meta.client) {
 <template>
     <div class="h-dvh w-full grid grid-cols-2 gap-2">
         <div class="h-fill">
-            <div class="h-1/6 border-b grid grid-cols-2 gap-1 place-items-end">
-                <div class="row-span-2 h-fill w-fill text-8xl self-center">
-                    {{ date.toFormat('dd') }}
-                </div>
-                <div class="place-self-start self-end-safe h-fill w-fill text-5xl ">
-                    {{ date.toFormat('cccc') }}
-                </div>
-                <div class="place-self-start h-fill w-fill text-xl">
-                    {{ date.toFormat('LLLL yyyy') }}
+            <div class="h-1/6 border-b">
+                <div class="grid grid-cols-3 gap-1 place-items-end">
+                    <div class="row-span-2 h-fill w-fill text-8xl self-center">
+                        {{ date.toFormat('dd') }}
+                    </div>
+                    <div class="place-self-start self-end-safe h-fill w-fill text-5xl col-span-2">
+                        {{ date.toFormat('cccc') }}
+                    </div>
+                    <div class="place-self-start h-fill w-fill text-xl">
+                        {{ date.toFormat('LLLL yyyy') }}
+                    </div>
                 </div>
             </div>
             <div class="h-5/6">
@@ -203,40 +205,29 @@ if (import.meta.client) {
         </div>
         <div class="h-full grid grid-cols-1">
             <div class="col-start-1 row-start-1">
-                <div
-                    class="h-full grid"
+                <div 
+                    class="h-full grid" 
                     :style="{ 
                         gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))` 
                     }"
                 >
-                    <div 
-                        v-for="hour in totalHours" 
-                        :key="hour" 
-                        class="border-t flex place-items-center" 
-                        :style="{
+                    <div v-for="hour in totalHours" :key="hour" class="border-t flex place-items-center" :style="{
                             gridRow: `span ${splitPeriod}`
-                        }"
-                    >
+                        }">
                         <div class="self-start">
-                            {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`, 'T').toFormat('t') }}
+                            {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`,
+                            'T').toFormat('t') }}
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-start-1 row-start-1">
-                <div 
-                    class="h-full grid" 
-                    :style="{
+                <div class="h-full grid" :style="{
                         gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))`,
                         gridTemplateColumns: `repeat(${totalColumnWidth}, minmax(0, 1fr))`
-                    }"
-                >
-                    <div 
-                        v-for="event in eventsWithColumns" 
-                        :key="event.id"
-                        class="text-white text-sm col-span-2 border"
-                        :style="getEventStyle(event)"
-                    >
+                    }">
+                    <div v-for="event in eventsWithColumns" :key="event.id" class="text-white text-sm col-span-2 border"
+                        :style="getEventStyle(event)">
                         <div class="font-semibold truncate">{{ event.title }}</div>
                         <div class="text-xs truncate">
                             {{ event.start.toFormat('h:mma') }} - {{ event.end.toFormat('h:mma') }}

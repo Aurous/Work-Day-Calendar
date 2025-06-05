@@ -2,7 +2,7 @@ import type { NitroApp } from "nitropack";
 import { Server as Engine } from "engine.io";
 import { Server } from "socket.io";
 import { defineEventHandler } from "h3";
-import { setIO } from "../utils/socket"; // adjust path as needed
+// import { setIO } from "/server/utils";
 
 export default defineNitroPlugin((nitroApp: NitroApp) => {
     const engine = new Engine();

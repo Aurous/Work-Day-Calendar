@@ -13,7 +13,7 @@ export default defineNuxtPlugin(() => {
 
         socket.on("disconnect", () => {
             console.log("Socket disconnected");
-          });
+        });
     }
 
     return {

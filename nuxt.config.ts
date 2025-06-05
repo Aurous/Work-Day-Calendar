@@ -15,6 +15,9 @@ export default defineNuxtConfig({
     experimental: {
       websocket: true,
       tasks: true
+    },
+    scheduledTasks: {
+      '*/15 * * * *': ['fetchCalendars']
     }
   }
 })
