@@ -3,7 +3,7 @@ export default defineTask({
         name: "fetchCalendars",
         description: "Get all calendar information",
     },
-    run({ payload, context }) {
+    run(_event) {
         console.log("calendar time");
         
         const socket = getIO();
