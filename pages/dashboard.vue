@@ -12,12 +12,6 @@ const eventsFetched = [
         endDT: '2025-06-03T10:30:00'
     },
     {
-        id: 4,
-        title: 'Test',
-        startDT: '2025-06-03T10:30:00',
-        endDT: '2025-06-03T13:30:00'
-    },
-    {
         id: 2,
         title: 'Lunch Break',
         startDT: '2025-06-03T12:00:00',
@@ -28,7 +22,55 @@ const eventsFetched = [
         title: 'Design Review',
         startDT: '2025-06-03T15:15:00',
         endDT: '2025-06-03T16:00:00'
-    }
+    },
+    {
+        id: 4,
+        title: 'Test',
+        startDT: '2025-06-03T10:30:00',
+        endDT: '2025-06-03T13:30:00'
+    },
+    {
+        id: 5,
+        title: 'Test',
+        startDT: '2025-06-03T10:30:00',
+        endDT: '2025-06-03T11:30:00'
+    },
+    {
+        id: 6,
+        title: 'Test',
+        startDT: '2025-06-03T15:30:00',
+        endDT: '2025-06-03T16:30:00'
+    },
+    {
+        id: 7,
+        title: 'Test',
+        startDT: '2025-06-03T12:30:00',
+        endDT: '2025-06-03T16:30:00'
+    },
+    {
+        id: 8,
+        title: 'Test',
+        startDT: '2025-06-03T12:30:00',
+        endDT: '2025-06-03T13:30:00'
+    },
+    {
+        id: 9,
+        title: 'Test',
+        startDT: '2025-06-03T13:00:00',
+        endDT: '2025-06-03T13:30:00'
+    },
+    {
+        id: 10,
+        title: 'Test',
+        startDT: '2025-06-03T13:30:00',
+        endDT: '2025-06-03T15:00:00'
+    },
+    {
+        id: 11,
+        title: 'Test',
+        startDT: '2025-06-03T14:00:00',
+        endDT: '2025-06-03T15:30:00'
+    },
 ];
 
 // inject luxon into events
@@ -99,8 +141,8 @@ const eventsWithColumns = events.map(({ id, ...event}) => {
 });
 
 // TODO: move these to environment/settings
-const startingHour = 7;
-const totalHours = 14;
+const startingHour = 8;
+const totalHours = 10;
 const splitPeriod = 4;
 const totalTime = totalHours * splitPeriod;
 const totalColumnWidth = (maxColumnWidth * 2) + 2;
