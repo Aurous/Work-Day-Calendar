@@ -152,8 +152,8 @@ const eventsWithColumns = events.map(({ id, ...event}) => {
 });
 
 // TODO: move these to environment/settings
-const startingHour = 8;
-const totalHours = 10;
+const startingHour = 7;
+const totalHours = 13;
 const splitPeriod = 4;
 const totalTime = totalHours * splitPeriod;
 const totalColumnWidth = (maxColumnWidth * 2) + 2;
