@@ -9,67 +9,78 @@ const eventsFetched = [
         id: 1,
         title: 'Meeting with Team',
         startDT: '2025-06-03T09:30:00',
-        endDT: '2025-06-03T10:30:00'
+        endDT: '2025-06-03T10:30:00',
+        color: 'blue'
     },
     {
         id: 2,
         title: 'Lunch Break',
         startDT: '2025-06-03T12:00:00',
-        endDT: '2025-06-03T13:00:00'
+        endDT: '2025-06-03T13:00:00',
+        color: 'blue'
     },
     {
         id: 3,
         title: 'Design Review',
         startDT: '2025-06-03T15:15:00',
-        endDT: '2025-06-03T16:00:00'
+        endDT: '2025-06-03T16:00:00',
+        color: 'blue'
     },
     {
         id: 4,
         title: 'Test',
         startDT: '2025-06-03T10:30:00',
-        endDT: '2025-06-03T13:30:00'
+        endDT: '2025-06-03T13:30:00',
+        color: 'blue'
     },
     {
         id: 5,
         title: 'Test',
         startDT: '2025-06-03T10:30:00',
-        endDT: '2025-06-03T11:30:00'
+        endDT: '2025-06-03T11:30:00',
+        color: 'red'
     },
     {
         id: 6,
         title: 'Test',
         startDT: '2025-06-03T15:30:00',
-        endDT: '2025-06-03T16:30:00'
+        endDT: '2025-06-03T16:30:00',
+        color: 'green'
     },
     {
         id: 7,
         title: 'Test',
         startDT: '2025-06-03T12:30:00',
-        endDT: '2025-06-03T16:30:00'
+        endDT: '2025-06-03T16:30:00',
+        color: 'yellow'
     },
     {
         id: 8,
         title: 'Test',
         startDT: '2025-06-03T12:30:00',
-        endDT: '2025-06-03T13:30:00'
+        endDT: '2025-06-03T13:30:00',
+        color: 'black'
     },
     {
         id: 9,
         title: 'Test',
         startDT: '2025-06-03T13:00:00',
-        endDT: '2025-06-03T13:30:00'
+        endDT: '2025-06-03T13:30:00',
+        color: 'blue'
     },
     {
         id: 10,
         title: 'Test',
         startDT: '2025-06-03T13:30:00',
-        endDT: '2025-06-03T15:00:00'
+        endDT: '2025-06-03T15:00:00',
+        color: 'blue'
     },
     {
         id: 11,
         title: 'Test',
         startDT: '2025-06-03T14:00:00',
-        endDT: '2025-06-03T15:30:00'
+        endDT: '2025-06-03T15:30:00',
+        color: 'blue'
     },
 ];
 
@@ -148,7 +159,7 @@ const totalTime = totalHours * splitPeriod;
 const totalColumnWidth = (maxColumnWidth * 2) + 2;
 
 function getEventStyle(event) {
-    const { startDT, endDT, column } = event;
+    const { startDT, endDT, column, color } = event;
 
     const start = DateTime.fromISO(startDT, { zone: DateTime.local().zoneName });
     const end = DateTime.fromISO(endDT, { zone: DateTime.local().zoneName });
@@ -159,6 +170,7 @@ function getEventStyle(event) {
     const duration = end.diff(start, ['hour']).toObject().hours * splitPeriod;
 
     return {
+        backgroundColor: color,
         gridColumnStart: column * 2,
         gridRow: `${startHour} / span ${duration}`
     }
@@ -216,7 +228,7 @@ function getEventStyle(event) {
                     <div 
                         v-for="event in eventsWithColumns" 
                         :key="event.id"
-                        class="bg-blue-500 text-white text-sm col-span-2 border" 
+                        class="text-white text-sm col-span-2 border" 
                         :style="getEventStyle(event)"
                     >
                         <div class="font-semibold truncate">{{ event.title }}</div>
