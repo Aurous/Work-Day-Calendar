@@ -112,29 +112,26 @@ const { assigned } = events
     // sort based on time or type
     .sort((a, b) => a.time - b.time || (a.type === 'end' ? -1 : 1))
     // calculate which times overlap
-    .reduce(
-        (state, { type, event: { id } }) => {
-            const { assigned, used, active } = state;
+    .reduce((state, { type, event: { id } }) => {
+        const { assigned, used, active } = state;
 
-            if (type === 'start') {
-                let column = 1;
-                while (used.has(column)) column++;
-                assigned.set(id, column);
-                active.set(id, column);
-                used.add(column);
-            } else {
-                used.delete(active.get(id));
-                active.delete(id);
-            }
-
-            return state;
-        },
-        {
-            assigned: new Map(),
-            used: new Set(),
-            active: new Map()
+        if (type === 'start') {
+            let column = 1;
+            while (used.has(column)) column++;
+            assigned.set(id, column);
+            active.set(id, column);
+            used.add(column);
+        } else {
+            used.delete(active.get(id));
+            active.delete(id);
         }
-    );
+
+        return state;
+    }, {
+        assigned: new Map(),
+        used: new Set(),
+        active: new Map() 
+    });
 
 // Add column info to events
 let maxColumnWidth = 1;
@@ -152,8 +149,8 @@ const eventsWithColumns = events.map(({ id, ...event}) => {
 });
 
 // TODO: move these to environment/settings
-const startingHour = 7;
-const totalHours = 13;
+const startingHour = 8;
+const totalHours = 11;
 const splitPeriod = 4;
 const totalTime = totalHours * splitPeriod;
 const totalColumnWidth = (maxColumnWidth * 2) + 2;
