@@ -159,10 +159,7 @@ const totalTime = totalHours * splitPeriod;
 const totalColumnWidth = (maxColumnWidth * 2) + 2;
 
 function getEventStyle(event) {
-    const { startDT, endDT, column, color } = event;
-
-    const start = DateTime.fromISO(startDT, { zone: DateTime.local().zoneName });
-    const end = DateTime.fromISO(endDT, { zone: DateTime.local().zoneName });
+    const { start, end, column, color } = event;
 
     const [hours, minutes] = start.toFormat('H:m').split(':');
     const startHour = ((totalTime * ((((parseInt(hours) * 60) + parseInt(minutes)) / 60) - startingHour)) / totalHours) + 1
