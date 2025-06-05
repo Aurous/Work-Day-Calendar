@@ -18,6 +18,8 @@
     "eslint": "^9.28.0",
     "luxon": "^3.6.1",
     "nuxt": "^3.17.4",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "typescript": "^5.8.3",
     "vue": "^3.5.16",
     "vue-router": "^4.5.1"

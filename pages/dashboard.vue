@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { DateTime, Interval } from 'luxon';
+import { io } from "socket.io-client";
 
 const date = ref(DateTime.now());
 
@@ -175,6 +176,15 @@ function getEventStyle(event) {
         gridRow: `${startHour} / span ${duration}`
     }
 }
+
+// websocket
+if (import.meta.client) {
+    const socket = io();
+
+    socket.on("ping", (data) => {
+        console.log(data)
+    });
+}
 </script>
 
 <template>
@@ -192,45 +202,34 @@ function getEventStyle(event) {
                 </div>
             </div>
             <div class="h-5/6">
-                to do list
+                <div>
+                    <p>Status: {{ isConnected ? "connected" : "disconnected" }}</p>
+                    <p>Transport: {{ transport }}</p>
+                </div>
             </div>
         </div>
         <div class="h-full grid grid-cols-1">
             <div class="col-start-1 row-start-1">
-                <div 
-                    class="h-full grid" 
-                    :style="{ 
+                <div class="h-full grid" :style="{ 
                         gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))` 
-                    }"
-                >
-                    <div 
-                        v-for="hour in totalHours" 
-                        :key="hour" 
-                        class="border-t flex place-items-center" 
-                        :style="{
+                    }">
+                    <div v-for="hour in totalHours" :key="hour" class="border-t flex place-items-center" :style="{
                             gridRow: `span ${splitPeriod}`
-                        }"
-                    >
+                        }">
                         <div class="self-start">
-                            {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`, 'T').toFormat('t') }}
+                            {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`,
+                            'T').toFormat('t') }}
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-start-1 row-start-1">
-                <div 
-                    class="h-full grid" 
-                    :style="{
+                <div class="h-full grid" :style="{
                         gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))`,
                         gridTemplateColumns: `repeat(${totalColumnWidth}, minmax(0, 1fr))`
-                    }"
-                >
-                    <div 
-                        v-for="event in eventsWithColumns" 
-                        :key="event.id"
-                        class="text-white text-sm col-span-2 border" 
-                        :style="getEventStyle(event)"
-                    >
+                    }">
+                    <div v-for="event in eventsWithColumns" :key="event.id" class="text-white text-sm col-span-2 border"
+                        :style="getEventStyle(event)">
                         <div class="font-semibold truncate">{{ event.title }}</div>
                         <div class="text-xs truncate">
                             {{ event.start.toFormat('h:mma') }} - {{ event.end.toFormat('h:mma') }}
