@@ -31,11 +31,7 @@ const eventsFetched = [
     }
 ];
 
-const startingHour = 7;
-const totalHours = 12;
-const splitPeriod = 4;
-const totalTime = totalHours * splitPeriod;
-
+// inject luxon into events
 const events = eventsFetched.map(event => {
     const { startDT, endDT } = event;
 
@@ -51,29 +47,66 @@ const events = eventsFetched.map(event => {
     }
 });
 
-function getHoursStyle() {
-    return {
-        gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))`
-    }
-}
+const { assigned } = events
+    // map events into array of start and end times
+    .flatMap(event => {
+        const { start, end } = event.interval;
+        return [
+            { time: start, type: 'start', event },
+            { time: end, type: 'end', event }
+        ];
+    })
+    // sort based on time or type
+    .sort((a, b) => a.time - b.time || (a.type === 'end' ? -1 : 1))
+    // calculate which times overlap
+    .reduce(
+        (state, { type, event: { id } }) => {
+            const { assigned, used, active } = state;
 
-function getHourStyle() {
-    return {
-        gridRow: `span ${splitPeriod}`
-    }
-}
+            if (type === 'start') {
+                let column = 1;
+                while (used.has(column)) column++;
+                assigned.set(id, column);
+                active.set(id, column);
+                used.add(column);
+            } else {
+                used.delete(active.get(id));
+                active.delete(id);
+            }
 
-function getScheduleStyle(events) {
-    // const overlapping = event1Interval.overlaps(event2Interval);
+            return state;
+        },
+        {
+            assigned: new Map(),
+            used: new Set(),
+            active: new Map()
+        }
+    );
 
+// Add column info to events
+let maxColumnWidth = 1;
+
+// attach column onto event
+const eventsWithColumns = events.map(({ id, ...event}) => {
+    const column = assigned.get(id);
+    if (column > maxColumnWidth) maxColumnWidth = column;
+ 
     return {
-        gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))`,
-        gridTemplateColumns: `repeat(${6}, minmax(0, 1fr))`
+        id,
+        ...event,
+        column
     }
-}
+});
+
+// TODO: move these to environment/settings
+const startingHour = 7;
+const totalHours = 14;
+const splitPeriod = 4;
+const totalTime = totalHours * splitPeriod;
+const totalColumnWidth = (maxColumnWidth * 2) + 2;
 
 function getEventStyle(event) {
-    const { startDT, endDT } = event;
+    const { startDT, endDT, column } = event;
 
     const start = DateTime.fromISO(startDT, { zone: DateTime.local().zoneName });
     const end = DateTime.fromISO(endDT, { zone: DateTime.local().zoneName });
@@ -84,7 +117,7 @@ function getEventStyle(event) {
     const duration = end.diff(start, ['hour']).toObject().hours * splitPeriod;
 
     return {
-        gridColumnStart: 2,
+        gridColumnStart: column * 2,
         gridRow: `${startHour} / span ${duration}`
     }
 }
@@ -110,19 +143,40 @@ function getEventStyle(event) {
         </div>
         <div class="h-full grid grid-cols-1">
             <div class="col-start-1 row-start-1">
-                <div class="h-full grid" :style="getHoursStyle()">
-                    <div v-for="hour in totalHours" :key="hour" class="border-t flex place-items-center" :style="getHourStyle()">
+                <div 
+                    class="h-full grid" 
+                    :style="{ 
+                        gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))` 
+                    }"
+                >
+                    <div 
+                        v-for="hour in totalHours" 
+                        :key="hour" 
+                        class="border-t flex place-items-center" 
+                        :style="{
+                            gridRow: `span ${splitPeriod}`
+                        }"
+                    >
                         <div class="self-start">
-                            {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`,
-                            'T').toFormat('t') }}
+                            {{ DateTime.fromFormat(`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`, 'T').toFormat('t') }}
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-start-1 row-start-1">
-                <div class="h-full grid" :style="getScheduleStyle(events)">
-                    <div v-for="event in events" :key="event.id"
-                        class="bg-blue-500 text-white text-sm col-span-2 border" :style="getEventStyle(event)">
+                <div 
+                    class="h-full grid" 
+                    :style="{
+                        gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))`,
+                        gridTemplateColumns: `repeat(${totalColumnWidth}, minmax(0, 1fr))`
+                    }"
+                >
+                    <div 
+                        v-for="event in eventsWithColumns" 
+                        :key="event.id"
+                        class="bg-blue-500 text-white text-sm col-span-2 border" 
+                        :style="getEventStyle(event)"
+                    >
                         <div class="font-semibold truncate">{{ event.title }}</div>
                         <div class="text-xs truncate">
                             {{ event.start.toFormat('h:mma') }} - {{ event.end.toFormat('h:mma') }}
