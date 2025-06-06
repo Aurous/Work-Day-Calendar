@@ -5,17 +5,19 @@
 </script>
 
 <template>
-	<div class="grid grid-cols-3 place-items-end gap-1">
-		<div class="h-fill w-fill row-span-2 self-center text-8xl">
-			{{ date.toFormat('dd') }}
-		</div>
+	<div class="w-fill">
 		<div
-			class="h-fill w-fill col-span-2 place-self-start self-end-safe text-5xl"
+			class="flex place-content-center gap-1 pt-4 sm:scale-50 md:scale-60 lg:scale-80 xl:scale-90 2xl:scale-100"
 		>
-			{{ date.toFormat('cccc') }}
-		</div>
-		<div class="h-fill w-fill place-self-start text-xl">
-			{{ date.toFormat('LLLL yyyy') }}
+			<div class="text-9xl">
+				{{ date.toFormat('dd') }}
+			</div>
+			<div class="flex flex-col gap-1 pt-4">
+				<div class="text-6xl">{{ date.toFormat('cccc') }}</div>
+				<div class="text-3xl">
+					{{ date.toFormat('LLLL yyyy') }}
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
