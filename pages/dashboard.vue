@@ -211,7 +211,8 @@ if (import.meta.client) {
                         gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))` 
                     }"
                 >
-                    <div v-for="hour in totalHours" :key="hour" class="border-t flex place-items-center" :style="{
+                    <div
+                        v-for="hour in totalHours" :key="hour" class="border-t flex place-items-center" :style="{
                             gridRow: `span ${splitPeriod}`
                         }">
                         <div class="self-start">
@@ -222,11 +223,13 @@ if (import.meta.client) {
                 </div>
             </div>
             <div class="col-start-1 row-start-1">
-                <div class="h-full grid" :style="{
+                <div
+                    class="h-full grid" :style="{
                         gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))`,
                         gridTemplateColumns: `repeat(${totalColumnWidth}, minmax(0, 1fr))`
                     }">
-                    <div v-for="event in eventsWithColumns" :key="event.id" class="text-white text-sm col-span-2 border"
+                    <div
+                        v-for="event in eventsWithColumns" :key="event.id" class="text-white text-sm col-span-2 border"
                         :style="getEventStyle(event)">
                         <div class="font-semibold truncate">{{ event.title }}</div>
                         <div class="text-xs truncate">
