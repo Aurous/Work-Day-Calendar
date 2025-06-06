@@ -17,7 +17,7 @@ export default defineNuxtConfig({
       tasks: true
     },
     scheduledTasks: {
-      '*/15 * * * *': ['fetchCalendars']
+      '*/1 * * * *': ['fetchCalendars']
     }
   }
 })
