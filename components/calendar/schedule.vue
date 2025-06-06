@@ -1,10 +1,10 @@
 <script setup lang="ts">
 	import { DateTime, Interval } from 'luxon';
 
-	const { $socket } = useNuxtApp();
-	$socket.on('update', (data) => {
-		console.log('Got update:', data);
-	});
+	// const { $socket } = useNuxtApp();
+	// $socket.on('update', (data) => {
+	// 	console.log('Got update:', data);
+	// });
 
 	interface eventBase {
 		id: number;
