@@ -42,7 +42,7 @@
 	<div class="flex">
 		<div
 			class="flex h-screen flex-col border-r pt-3 shadow-sm transition-all"
-			:class="isCollapsed ? 'w-14' : 'w-48'"
+			:class="isCollapsed ? 'w-15' : 'w-45'"
 		>
 			<UButton
 				v-for="{ label, ...item } in navItems"
