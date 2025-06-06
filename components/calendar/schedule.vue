@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import { DateTime, Interval } from 'luxon';
 
-    // const { $socket } = use
+	// const { $socket } = use
 	// $socket.on("update", (data) => {
 	//     console.log("Got update:", data);
 	// });
@@ -12,20 +12,25 @@
 		startDT: string;
 		endDT: string;
 		color: string;
-	};
+	}
 
-    interface eventsWithColumns extends event {
-        id: number;
-		title: string;
-		startDT: string;
-		endDT: string;
-		color: string;
-		start: DateTime;
-		end: DateTime;
+	interface eventWithDateTime extends event {
+		start: DateTime<boolean>;
+		end: DateTime<boolean>;
+		interval: Interval;
+	}
+
+	interface point {
+		time: DateTime<true>;
+		type: 'start' | 'end';
+		event: event;
+	}
+
+	interface eventsWithColumns extends eventWithDateTime {
 		column: number;
-    }
+	}
 
-    // this will change to a fetch
+	// this will change to a fetch
 	const eventsFetched = [
 		{
 			id: 1,
@@ -106,8 +111,8 @@
 		},
 	];
 
-    // inject luxon into events
-	const events = eventsFetched.map((event) => {
+	// inject luxon into events
+	const events = eventsFetched.map((event: event): eventWithDateTime => {
 		const { startDT, endDT } = event;
 
 		const start = DateTime.fromISO(startDT, {
@@ -126,15 +131,19 @@
 
 	const { assigned } = events
 		// map events into array of start and end times
-		.flatMap((event) => {
+		.flatMap((event: eventWithDateTime): point[] => {
 			const { start, end } = event.interval;
+			if (!start || !end) return [];
 			return [
 				{ time: start, type: 'start', event },
 				{ time: end, type: 'end', event },
 			];
 		})
 		// sort based on time or type
-		.sort((a, b) => a.time - b.time || (a.type === 'end' ? -1 : 1))
+		.sort(
+			({ time: timeA, type }: point, { time: timeB }: point): number =>
+				timeA.valueOf() - timeB.valueOf() || (type === 'end' ? -1 : 1)
+		)
 		// calculate which times overlap
 		.reduce(
 			(state, { type, event: { id } }) => {
@@ -190,13 +199,7 @@
 		});
 	}
 
-	function getEventStyle(
-		event: event,
-		totalTime: number,
-		startingHour: number,
-		totalHours: number,
-		splitPeriod: number
-	) {
+	function getEventStyle(event: eventsWithColumns) {
 		const { start, end, column, color } = event;
 
 		const [hours, minutes] = start.toFormat('H:m').split(':');
@@ -217,7 +220,7 @@
 </script>
 
 <template>
-	<div class="grid h-full grid-cols-1">
+	<div class="grid h-full w-full grid-cols-1">
 		<div class="col-start-1 row-start-1">
 			<div
 				class="grid h-full"
@@ -256,15 +259,7 @@
 					v-for="event in eventsWithColumns"
 					:key="event.id"
 					class="col-span-2 border text-sm text-white"
-					:style="
-						getEventStyle(
-							event,
-							totalTime,
-							startingHour,
-							totalHours,
-							splitPeriod
-						)
-					"
+					:style="getEventStyle(event)"
 				>
 					<div class="truncate font-semibold">{{ event.title }}</div>
 					<div class="truncate text-xs">

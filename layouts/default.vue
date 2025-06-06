@@ -46,10 +46,12 @@
 				v-bind="item"
 				color="neutral"
 				variant="ghost"
-				size="xlg"
+				size="xl"
 				class="h-10 justify-start gap-x-3 pl-5"
 			/>
 		</div>
-		<slot />
+		<div class="h-full w-full">
+			<slot />
+		</div>
 	</div>
 </template>
