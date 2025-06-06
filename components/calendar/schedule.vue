@@ -1,11 +1,6 @@
 <script setup lang="ts">
 	import { DateTime, Interval } from 'luxon';
 
-	// const { $socket } = useNuxtApp();
-	// $socket.on('update', (data) => {
-	// 	console.log('Got update:', data);
-	// });
-
 	interface eventBase {
 		id: number;
 		title: string;
@@ -192,14 +187,6 @@
 	const splitPeriod = 4;
 	const totalTime = totalHours * splitPeriod;
 	const totalColumnWidth = maxColumnWidth * 2 + 2;
-
-	if (import.meta.client) {
-		const { $socket } = useNuxtApp();
-		console.log($socket);
-		$socket.on('update', (data) => {
-			console.log('Got update:', data);
-		});
-	}
 
 	function getEventStyle(event: eventsWithColumn) {
 		const { start, end, column, color } = event;

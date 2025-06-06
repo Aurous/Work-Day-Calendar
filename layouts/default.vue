@@ -17,6 +17,11 @@
 		},
 		{
 			icon: 'i-lucide-home',
+			label: 'Home',
+			to: '/',
+		},
+		{
+			icon: 'i-lucide-layout-dashboard',
 			label: 'Dashboard',
 			to: '/dashboard',
 		},
@@ -26,7 +31,7 @@
 			to: '/calendars',
 		},
 		{
-			icon: 'i-lucide-settings',
+			icon: 'i-lucide-cog',
 			label: 'Preferences',
 			to: '/preferences',
 		},
@@ -37,7 +42,7 @@
 	<div class="flex">
 		<div
 			class="flex h-screen flex-col border-r pt-3 shadow-sm transition-all"
-			:class="isCollapsed ? 'w-15' : 'w-55'"
+			:class="isCollapsed ? 'w-14' : 'w-48'"
 		>
 			<UButton
 				v-for="{ label, ...item } in navItems"
