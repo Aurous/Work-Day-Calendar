@@ -213,54 +213,14 @@
 			<div class="h-5/6">TODO: add to do here</div>
 		</div>
 		<div class="grid h-full grid-cols-1">
-			<div class="col-start-1 row-start-1">
-				<div
-					class="grid h-full"
-					:style="{
-						gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))`,
-					}"
-				>
-					<div
-						v-for="hour in totalHours"
-						:key="hour"
-						class="flex place-items-center border-t"
-						:style="{
-							gridRow: `span ${splitPeriod}`,
-						}"
-					>
-						<div class="self-start">
-							{{
-								DateTime.fromFormat(
-									`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`,
-									'T'
-								).toFormat('t')
-							}}
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="col-start-1 row-start-1">
-				<div
-					class="grid h-full"
-					:style="{
-						gridTemplateRows: `repeat(${totalTime}, minmax(0, .25fr))`,
-						gridTemplateColumns: `repeat(${totalColumnWidth}, minmax(0, 1fr))`,
-					}"
-				>
-					<div
-						v-for="event in eventsWithColumns"
-						:key="event.id"
-						class="col-span-2 border text-sm text-white"
-						:style="getEventStyle(event)"
-					>
-						<div class="truncate font-semibold">{{ event.title }}</div>
-						<div class="truncate text-xs">
-							{{ event.start.toFormat('h:mma') }} -
-							{{ event.end.toFormat('h:mma') }}
-						</div>
-					</div>
-				</div>
-			</div>
+			<CalendarSchedule
+				:total-time="totalTime"
+				:total-hours="totalHours"
+				:split-period="splitPeriod"
+				:starting-hour="startingHour"
+				:total-column-width="totalColumnWidth"
+				:events-with-columns="eventsWithColumns"
+			/>
 		</div>
 	</div>
 </template>
