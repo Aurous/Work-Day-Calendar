@@ -10,6 +10,7 @@ function toggle() {
 const navItems = computed(() => [
     {
         icon: isCollapsed.value ? 'i-lucide-chevron-right' : 'i-lucide-chevron-left',
+        label: 'Hide',
         onClick: toggle
     },
     { 
@@ -34,14 +35,18 @@ const navItems = computed(() => [
 <template>
     <div class="flex">
         <div 
-            class="flex flex-col p-2 h-screen transition-all border-r shadow-sm"
-            :class="isCollapsed ? 'w-12' : 'w-40'"
+            class="flex flex-col h-screen transition-all border-r shadow-sm pt-3"
+            :class="isCollapsed ? 'w-14' : 'w-40'"
         >
             <UButton 
-                v-for="item in navItems" 
-                :key="item.to" 
+                v-for="{ label, ...item } in navItems" 
+                :key="label" 
+                :label="isCollapsed ? '' : label"
                 v-bind="item"
+                :square="!isCollapsed"
                 color="neutral"
+                variant="ghost"
+                class="h-8 flex items-center justify-center"
             />
         </div>
         <slot />
