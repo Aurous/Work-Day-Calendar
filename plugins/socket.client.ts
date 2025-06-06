@@ -1,24 +1,24 @@
-import type { Socket } from "socket.io-client";
-import { io } from "socket.io-client";
+import type { Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
 
 let socket: Socket;
 
 export default defineNuxtPlugin(() => {
-    if (!socket) {
-        socket = io();
+	if (!socket) {
+		socket = io();
 
-        socket.on("connect", () => {
-            console.log("Socket connected:", socket.id);
-        });
+		socket.on('connect', () => {
+			console.log('Socket connected:', socket.id);
+		});
 
-        socket.on("disconnect", () => {
-            console.log("Socket disconnected");
-        });
-    }
+		socket.on('disconnect', () => {
+			console.log('Socket disconnected');
+		});
+	}
 
-    return {
-        provide: {
-            socket,
-        },
-    };
+	return {
+		provide: {
+			socket,
+		},
+	};
 });

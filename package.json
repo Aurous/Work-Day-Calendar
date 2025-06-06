@@ -9,7 +9,9 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier --write .",
+    "format": "npm-run-all -p lint:fix prettier"
   },
   "dependencies": {
     "@nuxt/icon": "^1.13.0",
@@ -25,8 +27,13 @@
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.46",
     "@nuxt/eslint": "^1.4.1",
+    "@types/luxon": "^3.6.2",
     "eslint": "^9.28.0",
+    "eslint-plugin-prettier": "^5.4.1",
     "eslint-plugin-vue": "^10.2.0",
+    "prettier": "^3.5.3",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "prettier-plugin-tailwindcss": "^0.6.12",
     "typescript": "^5.8.3"
   }
 }
