@@ -1,12 +1,12 @@
 <script setup lang="ts">
 	import { DateTime, Interval } from 'luxon';
 
-	// const { $socket } = use
-	// $socket.on("update", (data) => {
-	//     console.log("Got update:", data);
-	// });
+	const { $socket } = useNuxtApp();
+	$socket.on('update', (data) => {
+		console.log('Got update:', data);
+	});
 
-	interface event {
+	interface eventBase {
 		id: number;
 		title: string;
 		startDT: string;
@@ -14,7 +14,7 @@
 		color: string;
 	}
 
-	interface eventWithDateTime extends event {
+	interface eventWithDateTime extends eventBase {
 		start: DateTime<boolean>;
 		end: DateTime<boolean>;
 		interval: Interval;
@@ -23,10 +23,10 @@
 	interface point {
 		time: DateTime<true>;
 		type: 'start' | 'end';
-		event: event;
+		event: eventBase;
 	}
 
-	interface eventsWithColumns extends eventWithDateTime {
+	interface eventsWithColumn extends eventWithDateTime {
 		column: number;
 	}
 
@@ -112,7 +112,7 @@
 	];
 
 	// inject luxon into events
-	const events = eventsFetched.map((event: event): eventWithDateTime => {
+	const events = eventsFetched.map((event: eventBase): eventWithDateTime => {
 		const { startDT, endDT } = event;
 
 		const start = DateTime.fromISO(startDT, {
@@ -173,16 +173,18 @@
 	let maxColumnWidth = 1;
 
 	// attach column onto event
-	const eventsWithColumns = events.map(({ id, ...event }) => {
-		const column = assigned.get(id);
-		if (column > maxColumnWidth) maxColumnWidth = column;
+	const eventsWithColumns = events.map(
+		({ id, ...event }: eventWithDateTime): eventsWithColumn => {
+			const column = assigned.get(id);
+			if (column > maxColumnWidth) maxColumnWidth = column;
 
-		return {
-			id,
-			...event,
-			column,
-		};
-	});
+			return {
+				id,
+				...event,
+				column,
+			};
+		}
+	);
 
 	// TODO: move these to environment/settings
 	const startingHour = 8;
@@ -199,7 +201,7 @@
 		});
 	}
 
-	function getEventStyle(event: eventsWithColumns) {
+	function getEventStyle(event: eventsWithColumn) {
 		const { start, end, column, color } = event;
 
 		const [hours, minutes] = start.toFormat('H:m').split(':');
