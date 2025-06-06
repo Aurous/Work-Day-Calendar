@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const isCollapsed = ref(false)
+const isCollapsed = ref(true)
 
 function toggle() {
     isCollapsed.value = !isCollapsed.value;
@@ -36,17 +36,17 @@ const navItems = computed(() => [
     <div class="flex">
         <div 
             class="flex flex-col h-screen transition-all border-r shadow-sm pt-3"
-            :class="isCollapsed ? 'w-14' : 'w-40'"
+            :class="isCollapsed ? 'w-15' : 'w-55'"
         >
             <UButton 
                 v-for="{ label, ...item } in navItems" 
                 :key="label" 
                 :label="isCollapsed ? '' : label"
                 v-bind="item"
-                :square="!isCollapsed"
                 color="neutral"
                 variant="ghost"
-                class="h-8 flex items-center justify-center"
+                size="xlg"
+                class="h-10 justify-start pl-5 gap-x-3"
             />
         </div>
         <slot />
