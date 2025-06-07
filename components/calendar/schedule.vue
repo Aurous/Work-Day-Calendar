@@ -30,64 +30,64 @@
 		{
 			id: 1,
 			title: 'Meeting with Team',
-			startDT: '2025-06-03T09:30:00',
-			endDT: '2025-06-03T10:30:00',
+			startDT: '2025-06-07T09:30:00',
+			endDT: '2025-06-07T10:30:00',
 			color: '#342c4f',
 		},
 		{
 			id: 2,
 			title: 'Lunch Break',
-			startDT: '2025-06-03T12:00:00',
-			endDT: '2025-06-03T13:00:00',
+			startDT: '2025-06-07T12:00:00',
+			endDT: '2025-06-07T13:00:00',
 			color: '#3d2e5a',
 		},
 		{
 			id: 3,
 			title: 'Design Review',
-			startDT: '2025-06-03T15:15:00',
-			endDT: '2025-06-03T16:00:00',
+			startDT: '2025-06-07T15:15:00',
+			endDT: '2025-06-07T16:00:00',
 			color: '#2c2f4c',
 		},
 		{
 			id: 4,
 			title: 'Test',
-			startDT: '2025-06-03T10:30:00',
-			endDT: '2025-06-03T13:30:00',
+			startDT: '2025-06-07T10:30:00',
+			endDT: '2025-06-07T13:30:00',
 			color: '#443a64',
 		},
 		{
 			id: 5,
 			title: 'Test',
-			startDT: '2025-06-03T10:30:00',
-			endDT: '2025-06-03T11:30:00',
+			startDT: '2025-06-07T10:30:00',
+			endDT: '2025-06-07T11:30:00',
 			color: '#3a345a',
 		},
 		{
 			id: 6,
 			title: 'Test',
-			startDT: '2025-06-03T15:30:00',
-			endDT: '2025-06-03T16:30:00',
+			startDT: '2025-06-07T15:30:00',
+			endDT: '2025-06-07T16:30:00',
 			color: '#4b3c72',
 		},
 		{
 			id: 9,
 			title: 'Test',
-			startDT: '2025-06-03T13:00:00',
-			endDT: '2025-06-03T13:30:00',
+			startDT: '2025-06-07T13:00:00',
+			endDT: '2025-06-07T13:30:00',
 			color: '#102027',
 		},
 		{
 			id: 10,
 			title: 'Test',
-			startDT: '2025-06-03T13:30:00',
-			endDT: '2025-06-03T15:00:00',
+			startDT: '2025-06-07T13:30:00',
+			endDT: '2025-06-07T15:00:00',
 			color: '#5c4b87',
 		},
 		{
 			id: 11,
 			title: 'Test',
-			startDT: '2025-06-03T14:00:00',
-			endDT: '2025-06-03T15:30:00',
+			startDT: '2025-06-07T14:00:00',
+			endDT: '2025-06-07T16:30:00',
 			color: '#261d3d',
 		},
 	];
@@ -152,12 +152,18 @@
 
 	// Add column info to events
 	let maxColumnWidth = 1;
+	let lowestStartDT: DateTime = DateTime.local().endOf('day');
+	let highestEndDT: DateTime = DateTime.local().startOf('day');
 
 	// attach column onto event
 	const eventsWithColumns = events.map(
 		({ id, ...event }: eventWithDateTime): eventsWithColumn => {
+			const { start: s, end: e } = event;
+
 			const column = assigned.get(id);
 			if (column > maxColumnWidth) maxColumnWidth = column;
+			if (s < lowestStartDT) lowestStartDT = s;
+			if (e > highestEndDT) highestEndDT = e;
 
 			return {
 				id,
@@ -167,29 +173,38 @@
 		}
 	);
 
-	// TODO: move these to environment/settings
-	const startingHour = 8;
-	const totalHours = 11;
+	// get the hour of the lowest start
+	const startingHour = parseInt(lowestStartDT.toFormat('H')) - 1;
+	// get the difference between the lowest start and highest end
+	const totalDiff = Interval.fromDateTimes(lowestStartDT, highestEndDT);
+	// get the total difference in hours
+	let totalHours = Math.ceil(totalDiff.length('hours')) + 2;
+	// edge case - prevent odd scaling due to
+	//		for highest end not ending on the hour
+	// 		whole total hours
+	if (parseInt(highestEndDT.toFormat('m')) !== 0 && totalHours % 1 === 0) {
+		totalHours += 1;
+	}
+	// TODO: move this to a setting
 	const splitPeriod = 4;
 	const totalTime = totalHours * splitPeriod;
 	const totalColumnWidth = maxColumnWidth * 2 + 2;
 
-	function getEventStyle(event: eventsWithColumn) {
-		const { start, end, column, color } = event;
-
-		const [hours, minutes] = start.toFormat('H:m').split(':');
-		const startHour =
-			(totalTime *
-				((parseInt(hours) * 60 + parseInt(minutes)) / 60 - startingHour)) /
-				totalHours +
-			1;
-		const duration =
-			(end.diff(start, ['hour']).toObject().hours || 1) * splitPeriod;
+	function getEventStyle({ start, interval, column, color }: eventsWithColumn) {
+		const [hours, minutes] = start
+			.toFormat('H:m')
+			.split(':')
+			.map((key) => parseInt(key));
+		const totalMinutes = hours * 60 + minutes;
+		const hourShift = totalMinutes / 60 - startingHour;
+		// use totals and hourShift to cross multi to get starting row grid
+		const rowStart = (totalTime * hourShift) / totalHours + 1;
+		const span = interval.length('hours') * splitPeriod;
 
 		return {
 			backgroundColor: color,
 			gridColumnStart: column * 2,
-			gridRow: `${startHour} / span ${duration}`,
+			gridRow: `${rowStart} / span ${span}`,
 		};
 	}
 </script>
