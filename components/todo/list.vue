@@ -100,16 +100,17 @@
 				:variant="'outline'"
 				class="m-2"
 				:ui="{
-					header: 'bg-transparent',
 					root: `border ${priorityBorderColors[priority]}`,
-					footer: `border-t ${priorityBorderColors[priority]}`,
 				}"
 			>
 				<template #default>
-					<div>
-						{{ title }}
-						<br />
-						{{ timeToRead(dueDate) }}
+					<div class="flex place-content-between gap-5">
+						<div>
+							{{ title }}
+						</div>
+						<div>
+							{{ timeToRead(dueDate) }}
+						</div>
 					</div>
 				</template>
 			</UCard>
