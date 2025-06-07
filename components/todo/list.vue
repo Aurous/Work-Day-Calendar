@@ -9,6 +9,15 @@
 		dueDate: DateTime;
 	}
 
+	const priorityBorderColors = [
+		'border-white',
+		'border-[#5a91b5]',
+		'border-[#4cc96f]',
+		'border-[#c99908]',
+		'border-[#be4c2c]',
+		'border-[#b9192e]',
+	];
+
 	const tasks: Task[] = [
 		{
 			id: 1,
@@ -57,47 +66,51 @@
 				priorityB - priorityA
 		);
 
-	const priorityColors = [
-		'border-white', // white
-		'border-[#5a91b5]', // blue
-		'border-[#4cc96f]', // green
-		'border-[#869e57]', // yellow
-		'border-[#a36655]', // orange
-		'border-[#8f3a46]', // red
-	];
-
-	function timeSince(date: DateTime): string {
+	function timeToRead(date: DateTime): string {
 		const now = DateTime.now();
 		const isFuture = date > now;
-		const select: DurationUnit[] = ['year', 'month', 'day', 'hour'];
-		const diff = isFuture ? date.diff(now, select) : now.diff(date, select);
-		const readable = diff.toHuman({
-			listStyle: 'long',
-			unitDisplay: 'long',
-		});
-		return isFuture ? `Due in ${readable}` : 'Past due!';
+
+		const units: DurationUnit[] = [
+			'years',
+			'months',
+			'days',
+			'hours',
+			'minutes',
+		];
+		const diff = isFuture ? date.diff(now, units) : now.diff(date, units);
+
+		for (let index = 0; index < units.length; index++) {
+			const unit = units[index];
+			const amount = Math.floor(diff.get(unit));
+			if (amount > 0) {
+				return `${isFuture ? 'Due in' : 'Overdue'} ${amount} ${unit.slice(0, -1)}${amount > 1 ? 's' : ''}`;
+			}
+		}
+
+		return 'Seconds ago';
 	}
 </script>
 
 <template>
-	<div class="grid grid-cols-2 p-6">
+	<div class="p-2">
 		<template v-if="tasks && tasks.length > 0">
 			<UCard
 				v-for="{ id, title, dueDate, priority } in tasks"
 				:key="id"
-				variant="outline"
+				:variant="'outline'"
 				class="m-2"
 				:ui="{
-					root: `border ${priorityColors[priority]}`,
-					footer: `border-t ${priorityColors[priority]}`,
+					header: 'bg-transparent',
+					root: `border ${priorityBorderColors[priority]}`,
+					footer: `border-t ${priorityBorderColors[priority]}`,
 				}"
 			>
-				<template #header>
-					{{ title }}
-				</template>
-
-				<template #footer>
-					<div>{{ timeSince(dueDate) }}</div>
+				<template #default>
+					<div>
+						{{ title }}
+						<br />
+						{{ timeToRead(dueDate) }}
+					</div>
 				</template>
 			</UCard>
 		</template>
