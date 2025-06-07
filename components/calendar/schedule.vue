@@ -218,14 +218,15 @@
 				}"
 			>
 				<div
-					v-for="hour in totalHours"
+					v-for="(hour, index) in totalHours"
 					:key="hour"
-					class="flex place-items-center border-t"
+					class="flex place-items-center"
+					:class="index > 0 ? 'border-t' : ''"
 					:style="{
 						gridRow: `span ${splitPeriod}`,
 					}"
 				>
-					<div class="self-start">
+					<div class="self-start pt-1 pl-2">
 						{{
 							DateTime.fromFormat(
 								`${String(startingHour + (hour - 1)).padStart(2, '0')}:00`,
