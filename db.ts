@@ -4,7 +4,7 @@ import Knex from 'knex';
 const config: KnexType.Config = {
 	client: 'sqlite3',
 	connection: {
-		filename: './server/database/data.db',
+		filename: './server/database.sqlite3',
 	},
 	useNullAsDefault: true,
 };
