@@ -1,5 +1,6 @@
 import type { Knex as KnexType } from 'knex';
 import Knex from 'knex';
+import { attachPaginate } from 'knex-paginate';
 
 // export interface Calendar {
 // 	id: number;
@@ -42,7 +43,16 @@ const config: KnexType.Config = {
 	useNullAsDefault: true,
 };
 
+let knex: KnexType | null = null;
+
 export function getKnex() {
-	console.log('next');
-	return Knex(config);
+	// if existing
+	if (knex) return knex;
+	// create knex instance
+	knex = Knex(config);
+	// knex does not exist
+	if (!knex) throw new Error('Database not initialized!');
+	// add pagination plugin
+	attachPaginate();
+	return knex;
 }

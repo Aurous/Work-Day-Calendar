@@ -8,6 +8,6 @@ export function setIO(server: Server) {
 }
 
 export function getIO(): Server {
-	if (!io) throw new Error('Socket.io not initialized');
+	if (!io) throw new Error('Websocket not initialized!');
 	return io;
 }

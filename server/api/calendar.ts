@@ -1,6 +1,8 @@
 export default defineEventHandler(async (event) => {
 	try {
-		return event.context.db('calendar').select(['id', 'name', 'color']);
+		const query = getQuery(event);
+
+		return event.context.knex('calendar').select('*').paginate(query);
 	} catch (error) {
 		console.log(error);
 
