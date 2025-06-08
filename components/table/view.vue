@@ -41,11 +41,9 @@
 				if (!sortable) return label;
 
 				let icon = 'i-lucide-arrow-up-down';
-				if (isSorted === 'asc') {
-					icon = 'i-lucide-arrow-up-narrow-wide';
-				} else if (isSorted === 'desc') {
-					icon = 'i-lucide-arrow-down-wide-narrow';
-				}
+				const asc = 'i-lucide-arrow-up-narrow-wide';
+				const desc = 'i-lucide-arrow-down-wide-narrow';
+				if (isSorted) icon = isSorted ? asc : desc;
 
 				return h(UButton, {
 					color: 'neutral',
