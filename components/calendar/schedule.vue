@@ -92,14 +92,20 @@
 		},
 	];
 
+	// out of lazyness just update the day of the date times.
+	const day = DateTime.now().toFormat('d');
+
 	// inject luxon into events
 	const events = eventsFetched.map((event: eventBase): eventWithDateTime => {
 		const { startDT, endDT } = event;
 
 		const start = DateTime.fromISO(startDT, {
 			zone: DateTime.local().zoneName,
-		});
-		const end = DateTime.fromISO(endDT, { zone: DateTime.local().zoneName });
+		}).set({ day });
+		console.log(start.toFormat('yyyy-LL-dd'));
+		const end = DateTime.fromISO(endDT, {
+			zone: DateTime.local().zoneName,
+		}).set({ day });
 		const interval = Interval.fromDateTimes(start, end);
 
 		return {
