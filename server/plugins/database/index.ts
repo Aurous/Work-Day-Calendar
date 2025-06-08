@@ -6,8 +6,12 @@ export default defineNitroPlugin((nitro) => {
 		const config: KnexType.Config = {
 			client: 'sqlite3',
 			connection: {
-				filename: '~/data.db',
+				filename: 'data.db',
 			},
+			// use this to turn all of the datetimes into luxon objects
+			// connection: {
+			// 	options: {
+			// 	  mapBinding: (value) => {
 			useNullAsDefault: true,
 		};
 		event.context.db = Knex(config);
