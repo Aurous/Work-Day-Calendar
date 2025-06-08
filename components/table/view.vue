@@ -1,4 +1,5 @@
 <script setup lang="ts">
+	const UButton = resolveComponent('UButton');
 	// const props = defineProps<{
 	//  columns: string[];
 	// 	items: [];
@@ -27,62 +28,46 @@
 		},
 	];
 
-	const keys = ['id', 'name', 'color'];
-
-	function headerSort(key) {
-		const header = key
+	function headerSort({ column, sortable }) {
+		const label = column
 			.split(' ')
-			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+			.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
 			.join(' ');
 		return {
-			accessorKey: key,
-			header,
+			accessorKey: column,
+			header: ({ column }) => {
+				const isSorted = column.getIsSorted();
+
+				if (!sortable) return label;
+
+				let icon = 'i-lucide-arrow-up-down';
+				if (isSorted === 'asc') {
+					icon = 'i-lucide-arrow-up-narrow-wide';
+				} else if (isSorted === 'desc') {
+					icon = 'i-lucide-arrow-down-wide-narrow';
+				}
+
+				return h(UButton, {
+					color: 'neutral',
+					variant: 'ghost',
+					label: label,
+					icon,
+					class: '-mx-2.5',
+					onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+				});
+			},
 		};
 	}
 
-	const columns = keys.map(headerSort);
-
-	// const columns: TableColumn<any>[] = [
-	// 	{
-	// 		accessorKey: 'id',
-	// 		header: 'Id',
-	// 	},
-	// 	{
-	// 		accessorKey: 'date',
-	// 		header: 'Date',
-	// 	},
-	// 	{
-	// 		accessorKey: 'status',
-	// 		header: 'Status',
-	// 	},
-	// 	{
-	// 		accessorKey: 'email',
-	// 		header: ({ column }) => {
-	// 			const isSorted = column.getIsSorted();
-
-	// 			return h(UButton, {
-	// 				color: 'neutral',
-	// 				variant: 'ghost',
-	// 				label: 'Email',
-	// 				icon: isSorted
-	// 					? isSorted === 'asc'
-	// 						? 'i-lucide-arrow-up-narrow-wide'
-	// 						: 'i-lucide-arrow-down-wide-narrow'
-	// 					: 'i-lucide-arrow-up-down',
-	// 				class: '-mx-2.5',
-	// 				onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-	// 			});
-	// 		},
-	// 	},
-	// 	{
-	// 		accessorKey: 'amount',
-	// 		header: 'Amount',
-	// 	},
-	// ];
+	const columns = [
+		{ column: 'id', sortable: true, default: 'asc' },
+		{ column: 'name', sortable: true },
+		{ column: 'color', sortable: false },
+	].map(headerSort);
 
 	const sorting = ref([
 		{
-			id: 'email',
+			id: 'id',
 			desc: false,
 		},
 	]);
