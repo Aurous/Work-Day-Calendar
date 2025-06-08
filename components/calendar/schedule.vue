@@ -249,7 +249,7 @@
 				<div
 					v-for="event in eventsWithColumns"
 					:key="event.id"
-					class="col-span-2 border text-sm text-white"
+					class="col-span-2 border p-2 text-sm text-white"
 					:style="getEventStyle(event)"
 				>
 					<div class="truncate font-semibold">{{ event.title }}</div>
