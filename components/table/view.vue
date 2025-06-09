@@ -4,29 +4,6 @@
 		api: string;
 	}>();
 
-	const getSortIcon = (isSorted) =>
-		isSorted
-			? isSorted === 'asc'
-				? 'i-lucide-arrow-up-narrow-wide'
-				: 'i-lucide-arrow-down-wide-narrow'
-			: 'i-lucide-arrow-up-down';
-	const createSortableHeader =
-		(header) =>
-		({ column }) =>
-			h(resolveComponent('UButton'), {
-				color: 'neutral',
-				variant: 'ghost',
-				label: header,
-				icon: getSortIcon(column.getIsSorted()),
-				class: '-mx-2.5',
-				onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-			});
-	const addSortableHeader = ({ header, accessorKey, sortable }) => ({
-		accessorKey,
-		header: sortable ? createSortableHeader(header) : header,
-	});
-	const columns = ref(headers.map(addSortableHeader));
-
 	const query = ref({
 		currentPage: 1,
 		perPage: 5,
@@ -39,11 +16,42 @@
 			desc: false,
 		},
 	]);
+
+	const getSortIcon = (isSorted) =>
+		isSorted
+			? isSorted === 'asc'
+				? 'i-lucide-arrow-up-narrow-wide'
+				: 'i-lucide-arrow-down-wide-narrow'
+			: 'i-lucide-arrow-up-down';
+	const createSortableHeader =
+		(header) =>
+		({ column }) => {
+			const isSorted = column.getIsSorted();
+
+			return h(resolveComponent('UButton'), {
+				color: 'neutral',
+				variant: 'ghost',
+				label: header,
+				icon: getSortIcon(column.getIsSorted()),
+				class: '-mx-2.5',
+				onClick: () =>
+					(sorting.value[0] = {
+						id: column.id,
+						desc: column.getIsSorted() === 'asc',
+					}),
+			});
+		};
+	const addSortableHeader = ({ header, accessorKey, sortable }) => ({
+		accessorKey,
+		header: sortable ? createSortableHeader(header) : header,
+	});
+	const columns = ref(headers.map(addSortableHeader));
+
 	// api call for table
 	const { data, error, pending, execute } = await useFetch(
 		() => `/api/${api}`,
 		{
-			query: query.value,
+			query: computed(() => query.value),
 			immediate: true,
 		}
 	);
@@ -56,10 +64,17 @@
 		{ deep: true }
 	);
 	// make sure to update the query when changing the sort
-	watch(sorting, ([{ id = 'id', desc = false }]) => {
-		query.value.orderBy = id;
-		query.value.order = desc ? 'desc' : 'asc';
-	});
+	watch(
+		sorting,
+		([{ id, desc }]) => {
+			query.value = {
+				...query.value,
+				order: desc ? 'desc' : 'asc',
+				orderBy: id,
+			};
+		},
+		{ deep: true }
+	);
 	// prevent data from becoming null when fetching updates
 	watch(
 		data,
@@ -70,11 +85,6 @@
 	);
 </script>
 
-<!-- 
-	TODO: figure out a better way for sorting
-	PROBLEM: slight show of data sorting by table for api returns data
-	might be able to use query over sort ref
- -->
 <template>
 	<div class="grid h-full grid-rows-2">
 		<UTable
@@ -96,6 +106,9 @@
 	<!-- 
 		TODO: ensure that spacing does not change on table and pagination
 		probably need to use flex, but grid might work better
+	-->
+	<!-- 
+		TODO: ensure that the spacing on the columns stays the same
 	-->
 	<!-- 
 		TODO: add perPage component

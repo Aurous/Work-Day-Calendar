@@ -1,8 +1,9 @@
 export default defineEventHandler(async (event) => {
 	try {
+		console.log('get query', getQuery(event));
 		const { orderBy = 'id', order = 'asc', ...pagination } = getQuery(event);
 
-		console.log({ orderBy, order, ...pagination });
+		console.log('true', { orderBy, order, ...pagination });
 
 		return event.context
 			.knex('calendar')
