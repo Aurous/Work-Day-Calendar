@@ -6,7 +6,7 @@
 
 	const query = ref({
 		currentPage: 1,
-		perPage: 5,
+		perPage: 10,
 		order: 'asc',
 		orderBy: 'id',
 	});
@@ -86,7 +86,7 @@
 </script>
 
 <template>
-	<div class="grid h-full grid-rows-2">
+	<div class="grid h-full grid-cols-2 grid-rows-6">
 		<UTable
 			ref="table"
 			v-model:pagination="query"
@@ -94,6 +94,7 @@
 			:data="data?.data"
 			:columns="columns"
 			:loading="pending"
+			class="col-span-2 row-span-5"
 		/>
 		<UPagination
 			v-model:page="query.currentPage"
