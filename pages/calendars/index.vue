@@ -19,9 +19,9 @@
 </script>
 
 <template>
-	<div class="grid h-dvh w-full">
-		<div class="h-1/6 border-b p-5 text-5xl">Calendar</div>
-		<div class="h-full p-5">
+	<div>
+		<div class="h-1/8 border-b p-6 text-5xl">Calendar</div>
+		<div class="h-7/8 p-5">
 			<TableView :headers="headers" api="calendar" />
 		</div>
 	</div>

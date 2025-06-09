@@ -86,7 +86,14 @@
 </script>
 
 <template>
-	<div class="grid h-full grid-cols-2 grid-rows-6">
+	<div class="flex h-full flex-col justify-center pt-2 pr-5 pl-5">
+		<div class="mb-4 flex justify-center">
+			<UInput
+				v-model="query.q"
+				placeholder="Search..."
+				class="w-full max-w-md"
+			/>
+		</div>
 		<UTable
 			ref="table"
 			v-model:pagination="query"
@@ -94,7 +101,7 @@
 			:data="data?.data"
 			:columns="columns"
 			:loading="pending"
-			class="col-span-2 row-span-5"
+			class="flex-1"
 		/>
 		<UPagination
 			v-model:page="query.currentPage"
@@ -102,6 +109,7 @@
 			:items-per-page="query.perPage"
 			show-first
 			show-last
+			class="mt-2"
 		/>
 	</div>
 	<!-- 

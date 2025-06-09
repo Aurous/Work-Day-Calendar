@@ -55,7 +55,7 @@
 				class="h-10 justify-start gap-x-3 pl-5"
 			/>
 		</div>
-		<div class="h-full w-full">
+		<div class="h-screen w-full">
 			<slot />
 		</div>
 	</div>

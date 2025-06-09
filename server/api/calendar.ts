@@ -1,14 +1,21 @@
+import type { Knex } from 'knex';
+
 export default defineEventHandler(async (event) => {
 	try {
-		console.log('get query', getQuery(event));
-		const { orderBy = 'id', order = 'asc', ...pagination } = getQuery(event);
-
-		console.log('true', { orderBy, order, ...pagination });
+		const { orderBy = 'id', order = 'asc', q, ...pagination } = getQuery(event);
 
 		return event.context
 			.knex('calendar')
 			.select('*')
 			.orderBy(orderBy, order)
+			.where((qb: Knex.QueryBuilder) => {
+				if (q) {
+					const search = `%${q}%`;
+					qb.where('name', 'like', search)
+						.orWhere('id', 'like', search)
+						.orWhere('color', 'like', search);
+				}
+			})
 			.paginate({
 				...pagination,
 				isLengthAware: true,
