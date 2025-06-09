@@ -23,4 +23,4 @@ logs
 .env.*
 !.env.example
 
-server/plugins/database/data.db
+server/database.sqlite3
