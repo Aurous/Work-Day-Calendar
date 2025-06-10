@@ -83,17 +83,18 @@
 		},
 		{ deep: true }
 	);
+
+	const onSelect = (row: TableRow<Payment>) =>
+		navigateTo(`/${api}/${row.getValue('id')}`);
 </script>
 
 <template>
-	<div class="flex h-full flex-col justify-center pt-2 pr-5 pl-5">
-		<div class="mb-4 flex justify-center">
-			<UInput
-				v-model="query.q"
-				placeholder="Search..."
-				class="w-full max-w-md"
-			/>
-		</div>
+	<div class="flex h-full flex-col justify-center pt-5 pr-5 pl-5">
+		<UInput
+			v-model="query.q"
+			placeholder="Search..."
+			class="w-full max-w-sm pb-2"
+		/>
 		<UTable
 			ref="table"
 			v-model:pagination="query"
@@ -102,14 +103,16 @@
 			:columns="columns"
 			:loading="pending"
 			class="flex-1"
+			@select="onSelect"
 		/>
+
 		<UPagination
 			v-model:page="query.currentPage"
 			:total="data?.pagination.total"
 			:items-per-page="query.perPage"
 			show-first
 			show-last
-			class="mt-2"
+			class="w-full max-w-sm pt-3 pl-1"
 		/>
 	</div>
 	<!-- 

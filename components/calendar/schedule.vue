@@ -102,7 +102,6 @@
 		const start = DateTime.fromISO(startDT, {
 			zone: DateTime.local().zoneName,
 		}).set({ day });
-		console.log(start.toFormat('yyyy-LL-dd'));
 		const end = DateTime.fromISO(endDT, {
 			zone: DateTime.local().zoneName,
 		}).set({ day });
@@ -213,6 +212,10 @@
 			gridRow: `${rowStart} / span ${span}`,
 		};
 	}
+
+	onMounted(() => {
+		useSocket().on('update', (data) => console.log('we go data', data));
+	});
 </script>
 
 <template>

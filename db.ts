@@ -20,6 +20,7 @@ await db.schema
 	.createTable('task', (table) => {
 		table.increments('id').primary();
 		table.string('title');
+		table.boolean('isCompleted');
 		table.integer('priority');
 		table.datetime('datetime');
 	})

@@ -1,11 +1,11 @@
-<script setup lang="ts">
-	const connection = ref(false);
-
-	onMounted(() => {
-		connection.value = useSocket().connected;
-	});
-</script>
+<script setup lang="ts"></script>
 
 <template>
-	<p>Socket {{ connection ? 'Ready' : 'Starting...' }}</p>
+	<div class="grid h-dvh w-full grid-cols-5 grid-rows-5">
+		<CalendarDate class="col-span-2 col-start-1 row-start-1 border-b" />
+		<TodoList class="col-span-2 col-start-1 row-span-4 row-start-2" />
+		<CalendarSchedule
+			class="col-span-3 col-start-3 row-span-5 row-start-1 border-l"
+		/>
+	</div>
 </template>

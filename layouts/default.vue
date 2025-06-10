@@ -31,6 +31,11 @@
 			to: '/calendars',
 		},
 		{
+			icon: 'i-lucide-circle-check-big',
+			label: 'Tasks',
+			to: '/tasks',
+		},
+		{
 			icon: 'i-lucide-cog',
 			label: 'Preferences',
 			to: '/preferences',
