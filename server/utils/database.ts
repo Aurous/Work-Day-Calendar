@@ -24,33 +24,3 @@ export function getKnex() {
 	attachPaginate();
 	return knex;
 }
-
-// move this here until i can get it working the way I intended
-export interface Calendar {
-	id: number;
-	name: string;
-	color: string;
-}
-
-// export interface Event {
-// 	id: number;
-// 	title: string;
-// 	startDT: string;
-// 	endDT: string;
-// 	calendarId: number;
-// }
-
-// export interface Task {
-// 	id: number;
-// 	title: string;
-// 	priority: number;
-// 	datetime: string;
-// }
-
-// declare module 'knex/types/tables' {
-// 	interface Tables {
-// 		calendar: Calendar;
-// 		event: Event;
-// 		task: Task;
-// 	}
-// }
