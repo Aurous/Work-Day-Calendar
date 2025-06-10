@@ -89,12 +89,15 @@
 </script>
 
 <template>
-	<div class="flex h-full flex-col justify-center pt-5 pr-5 pl-5">
+	<div class="grid grid-cols-3 grid-rows-10">
 		<UInput
 			v-model="query.q"
 			placeholder="Search..."
-			class="w-full max-w-sm pb-2"
+			class="col-start-1 row-start-1"
 		/>
+		<!-- 
+			TODO: add button to create navigate to new item page
+		-->
 		<UTable
 			ref="table"
 			v-model:pagination="query"
@@ -102,7 +105,7 @@
 			:data="data?.data"
 			:columns="columns"
 			:loading="pending"
-			class="flex-1"
+			class="col-span-3 col-start-1 row-span-8 row-start-2"
 			@select="onSelect"
 		/>
 
@@ -112,7 +115,7 @@
 			:items-per-page="query.perPage"
 			show-first
 			show-last
-			class="w-full max-w-sm pt-3 pl-1"
+			class="col-start-1 row-start-10 self-end"
 		/>
 	</div>
 	<!-- 
@@ -121,10 +124,5 @@
 	-->
 	<!-- 
 		TODO: ensure that the spacing on the columns stays the same
-	-->
-	<!-- 
-		TODO: add perPage component
-		might use dropdown?
-		slider? => probably not 
 	-->
 </template>

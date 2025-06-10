@@ -12,7 +12,7 @@ export default defineNuxtConfig({
 			tasks: true,
 		},
 		scheduledTasks: {
-			'*/1 * * * *': ['fetchCalendars'],
+			'*/15 * * * *': ['fetchCalendars'],
 		},
 	},
 });

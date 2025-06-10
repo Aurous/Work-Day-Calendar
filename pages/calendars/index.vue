@@ -21,8 +21,10 @@
 <template>
 	<div>
 		<div class="h-1/8 border-b p-6 text-5xl">Calendar</div>
-		<div class="h-7/8 p-5">
-			<TableView :headers="headers" api="calendar" />
+		<div class="h-7/8">
+			<div class="h-full w-full">
+				<TableView :headers="headers" api="calendar" />
+			</div>
 		</div>
 	</div>
 </template>

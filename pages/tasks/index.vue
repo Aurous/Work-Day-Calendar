@@ -31,8 +31,10 @@
 <template>
 	<div>
 		<div class="h-1/8 border-b p-6 text-5xl">Tasks</div>
-		<div class="h-7/8 p-5">
-			<TableView :headers="headers" api="task" />
+		<div class="h-7/8">
+			<div class="h-full w-full">
+				<TableView :headers="headers" api="task" />
+			</div>
 		</div>
 	</div>
 </template>
