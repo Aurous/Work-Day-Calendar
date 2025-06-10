@@ -3,14 +3,11 @@ import Knex from 'knex';
 import { attachPaginate } from 'knex-paginate';
 
 const config: KnexType.Config = {
-	client: 'sqlite3',
+	client: 'better-sqlite3',
 	connection: {
 		filename: './server/database.sqlite3',
+		options: {},
 	},
-	// use this to turn all of the datetimes into luxon objects
-	// connection: {
-	// 	options: {
-	// 	  mapBinding: (value) => {
 	useNullAsDefault: true,
 };
 
