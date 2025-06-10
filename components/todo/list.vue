@@ -18,53 +18,16 @@
 		'border-[#b9192e]',
 	];
 
-	const tasks: Task[] = [
-		{
-			id: 1,
-			title: 'Prepare Quarterly Budget Report',
-			priority: 5,
-			date: '2025-08-15',
-		},
-		{
-			id: 2,
-			title: 'Client Presentation: New Marketing Strategy',
-			priority: 4,
-			date: '2025-09-10',
-		},
-		{
-			id: 3,
-			title: 'Team Meeting: Project Roadmap Review',
-			priority: 3,
-			date: '2025-10-05',
-		},
-		{
-			id: 4,
-			title: 'Update Website Content',
-			priority: 2,
-			date: '2025-11-20',
-		},
-		{
-			id: 5,
-			title: 'Organize Office Supplies',
-			priority: 1,
-			date: '2025-12-01',
-		},
-		{
-			id: 6,
-			title: 'Schedule Annual Performance Reviews',
-			priority: 0,
-			date: '2026-01-15',
-		},
-	]
-
-		.map((task) => ({
-			...task,
-			dueDate: DateTime.fromISO(task.date),
-		}))
-		.sort(
-			({ priority: priorityA }, { priority: priorityB }): number =>
-				priorityB - priorityA
-		);
+	const { data } = await useFetch('/api/task/incomplete');
+	const tasks = ref(
+		data.value.map((task) => {
+			console.log(task);
+			return {
+				...task,
+				dueDate: DateTime.fromFormat(task.datetime, 'yyyy-MM-dd HH:mm:ss'),
+			};
+		})
+	);
 
 	function timeToRead(date: DateTime): string {
 		const now = DateTime.now();
@@ -93,6 +56,12 @@
 
 <template>
 	<div class="p-2">
+		<!-- 
+			TODO: add a switcher component to swap between different tasks
+			IDEA:
+					[incomplete] [soonest due] [incomplete + overdue]
+					switch between each view every X seconds
+		-->
 		<template v-if="tasks && tasks.length > 0">
 			<UCard
 				v-for="{ id, title, dueDate, priority } in tasks"
