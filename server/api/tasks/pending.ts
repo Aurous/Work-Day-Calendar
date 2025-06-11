@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
 			.knex('task')
 			.select('*')
 			.where((qb: Knex.QueryBuilder) => {
-				qb.where('isCompleted', 1).whereRaw("datetime('now') <= datetime");
+				qb.where('isCompleted', 0).whereRaw("datetime('now') <= datetime");
 			})
 			.orderBy([
 				{ column: 'datetime', order: 'asc' },
