@@ -26,7 +26,7 @@
 
 	onMounted(() => {
 		animation = setInterval(() => {
-			progress.value += 2; // 200ms * 50 = 10 seconds
+			progress.value += 1;
 			if (progress.value >= 100) {
 				progress.value = 0;
 				const currentIndex = items.value.findIndex(
@@ -35,7 +35,7 @@
 				const nextIndex = (currentIndex + 1) % items.value.length;
 				activeTab.value = items.value[nextIndex].label;
 			}
-		}, 200);
+		}, 100);
 	});
 
 	onBeforeUnmount(() => {
@@ -49,10 +49,12 @@
 			v-model="activeTab"
 			:items="items"
 			variant="link"
-			:ui="{ trigger: 'grow' }"
-			class="gap-1"
+			:ui="{
+				trigger: 'grow',
+			}"
+			class="gap-0.25"
 		/>
-		<UProgress v-model="progress" />
+		<UProgress v-model="progress" size="xs" />
 		<div>
 			<TodoList v-if="activeTab === 'incomplete'" api="incomplete" />
 			<TodoList v-else-if="activeTab === 'pending'" api="pending" />
