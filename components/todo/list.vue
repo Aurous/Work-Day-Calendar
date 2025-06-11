@@ -18,7 +18,7 @@
 		'border-[#b9192e]',
 	];
 
-	const { data } = await useFetch('/api/task/incomplete');
+	const { data } = await useFetch('/api/tasks/incomplete');
 	const tasks = ref(
 		data.value.map((task) => {
 			console.log(task);
