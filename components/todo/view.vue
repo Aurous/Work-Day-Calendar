@@ -46,24 +46,18 @@
 
 <template>
 	<div class="w-full">
-		<UProgress v-model="progress" />
 		<UTabs
 			v-model="activeTab"
 			:items="items"
-			class="w-full gap-4"
+			variant="link"
 			:ui="{ trigger: 'grow' }"
-		>
-			<template #incomplete>
-				<TodoList api="incomplete" />
-			</template>
-
-			<template #pending>
-				<TodoList api="pending" />
-			</template>
-
-			<template #overdue>
-				<TodoList api="overdue" />
-			</template>
-		</UTabs>
+			class="gap-1"
+		/>
+		<UProgress v-model="progress" />
+		<div>
+			<TodoList v-if="activeTab === 'incomplete'" api="incomplete" />
+			<TodoList v-else-if="activeTab === 'pending'" api="pending" />
+			<TodoList v-else-if="activeTab === 'overdue'" api="overdue" />
+		</div>
 	</div>
 </template>
