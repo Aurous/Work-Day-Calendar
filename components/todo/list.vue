@@ -17,7 +17,7 @@
 		'border-white',
 		'border-[#5a91b5]',
 		'border-[#4cc96f]',
-		'border-[#c99908]',
+		'border-[#f3b90a]',
 		'border-[#be4c2c]',
 		'border-[#b9192e]',
 	];
