@@ -1,5 +1,3 @@
 <script setup lang="ts"></script>
 
-<template>
-	<div>asdf</div>
-</template>
+<template>asdf</template>
