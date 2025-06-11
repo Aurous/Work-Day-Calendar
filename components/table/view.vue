@@ -107,9 +107,12 @@
 			placeholder="Search..."
 			class="col-start-1 row-start-1"
 		/>
-		<!-- 
-			TODO: add button to create navigate to new item page
-		-->
+		<UButton
+			icon="i-lucide-square-plus"
+			size="lg"
+			:label="`Create new ${api}`"
+			class="col-start-3 row-start-1 self-start justify-self-end"
+		/>
 		<UTable
 			ref="table"
 			v-model:pagination="query"
@@ -129,9 +132,9 @@
 			show-last
 			class="col-start-1 row-start-13 self-end"
 		/>
-		<div class="col-start-3 row-start-13 self-end">
-			<label for="perPage" class="pr-10">Items per page</label>
-			<USelect id="perPage" v-model="perPage" :items="dropdown" class="w-1/2" />
+		<div class="col-start-3 row-start-13 self-end justify-self-end">
+			<label for="perPage" class="pr-10">Per page:</label>
+			<USelect id="perPage" v-model="perPage" :items="dropdown" class="" />
 		</div>
 	</div>
 	<!-- 
