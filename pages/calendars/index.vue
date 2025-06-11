@@ -23,7 +23,7 @@
 		<div class="h-1/8 border-b p-6 text-5xl">Calendar</div>
 		<div class="h-7/8">
 			<div class="h-full w-full p-6">
-				<TableView :headers="headers" api="calendar" />
+				<TableView :headers="headers" api="calendars" />
 			</div>
 		</div>
 	</div>

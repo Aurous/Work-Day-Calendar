@@ -38,7 +38,7 @@
 		<div class="h-1/8 border-b p-6 text-5xl">Tasks</div>
 		<div class="h-7/8">
 			<div class="h-full w-full p-6">
-				<TableView :headers="headers" api="task" />
+				<TableView :headers="headers" api="tasks" />
 			</div>
 		</div>
 	</div>
