@@ -60,12 +60,6 @@
 
 <template>
 	<div class="p-2">
-		<!-- 
-			TODO: add a switcher component to swap between different tasks
-			IDEA:
-					[incomplete] [soonest due] [incomplete + overdue]
-					switch between each view every X seconds
-		-->
 		<template v-if="tasks && tasks.length > 0">
 			<UCard
 				v-for="{ id, title, dueDate, priority } in tasks"

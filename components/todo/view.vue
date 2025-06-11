@@ -25,7 +25,6 @@
 	let animation: NodeJS.Timer;
 
 	onMounted(() => {
-		// Progress bar updates every 100ms
 		animation = setInterval(() => {
 			progress.value += 2; // 200ms * 50 = 10 seconds
 			if (progress.value >= 100) {
