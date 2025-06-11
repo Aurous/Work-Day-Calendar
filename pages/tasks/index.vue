@@ -4,31 +4,31 @@
 			accessorKey: 'id',
 			header: 'Id',
 			sortable: true,
-			size: 10,
+			width: '3/10',
 		},
 		{
 			accessorKey: 'title',
 			header: 'Title',
 			sortable: true,
-			size: 10,
+			width: '3/10',
 		},
 		{
 			accessorKey: 'isCompleted',
 			header: 'Completed',
 			sortable: true,
-			size: 10,
+			width: '1/10',
 		},
 		{
 			accessorKey: 'priority',
 			header: 'Priority',
 			sortable: true,
-			size: 10,
+			width: '1/10',
 		},
 		{
 			accessorKey: 'datetime',
 			header: 'Due Date',
 			sortable: true,
-			size: 10,
+			width: '2/10',
 		},
 	];
 </script>

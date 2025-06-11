@@ -43,11 +43,14 @@
 					}),
 			});
 		};
-	const addSortableHeader = ({ header, accessorKey, sortable, size }) => ({
+	const addSortableHeader = ({ header, accessorKey, sortable, width }) => ({
 		accessorKey,
 		header: sortable ? createSortableHeader(header) : header,
-		size,
-		maxSize: size,
+		meta: {
+			class: {
+				td: `w-${width} whitespace-normal`,
+			},
+		},
 	});
 	const columns = ref(headers.map(addSortableHeader));
 
