@@ -4,6 +4,8 @@
 		api: string;
 	}>();
 
+	const dropdown = ref([10, 25, 50]);
+	const perPage = ref(10);
 	const query = ref({
 		currentPage: 1,
 		perPage: 10,
@@ -41,9 +43,11 @@
 					}),
 			});
 		};
-	const addSortableHeader = ({ header, accessorKey, sortable }) => ({
+	const addSortableHeader = ({ header, accessorKey, sortable, size }) => ({
 		accessorKey,
 		header: sortable ? createSortableHeader(header) : header,
+		size,
+		maxSize: size,
 	});
 	const columns = ref(headers.map(addSortableHeader));
 
@@ -58,7 +62,8 @@
 	// run the data execute when the query has changed
 	watch(
 		query,
-		() => {
+		(newData) => {
+			console.log(newData);
 			execute();
 		},
 		{ deep: true }
@@ -83,13 +88,20 @@
 		},
 		{ deep: true }
 	);
+	watch(perPage, (newData) => {
+		query.value = {
+			...query.value,
+			perPage: newData,
+			currentPage: 1,
+		};
+	});
 
 	const onSelect = (row: TableRow<Payment>) =>
 		navigateTo(`/${api}/${row.getValue('id')}`);
 </script>
 
 <template>
-	<div class="grid grid-cols-3 grid-rows-10">
+	<div class="grid h-full grid-cols-3 grid-rows-13">
 		<UInput
 			v-model="query.q"
 			placeholder="Search..."
@@ -105,23 +117,23 @@
 			:data="data?.data"
 			:columns="columns"
 			:loading="pending"
-			class="col-span-3 col-start-1 row-span-8 row-start-2"
+			class="col-span-3 col-start-1 row-span-11 row-start-2"
+			sticky
 			@select="onSelect"
 		/>
-
 		<UPagination
 			v-model:page="query.currentPage"
 			:total="data?.pagination.total"
 			:items-per-page="query.perPage"
 			show-first
 			show-last
-			class="col-start-1 row-start-10 self-end"
+			class="col-start-1 row-start-13 self-end"
 		/>
+		<div class="col-start-3 row-start-13 self-end">
+			<label for="perPage" class="pr-10">Items per page</label>
+			<USelect id="perPage" v-model="perPage" :items="dropdown" class="w-1/2" />
+		</div>
 	</div>
-	<!-- 
-		TODO: ensure that spacing does not change on table and pagination
-		probably need to use flex, but grid might work better
-	-->
 	<!-- 
 		TODO: ensure that the spacing on the columns stays the same
 	-->
