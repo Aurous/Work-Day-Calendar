@@ -1,6 +1,10 @@
 <script setup lang="ts">
 	import { DateTime, type DurationUnit } from 'luxon';
 
+	const { api } = defineProps<{
+		api: string;
+	}>();
+
 	interface Task {
 		id: number;
 		title: string;
@@ -18,7 +22,7 @@
 		'border-[#b9192e]',
 	];
 
-	const { data } = await useFetch('/api/tasks/incomplete');
+	const { data } = await useFetch(`/api/tasks/${api}`);
 	const tasks = ref(
 		data.value.map((task) => {
 			console.log(task);

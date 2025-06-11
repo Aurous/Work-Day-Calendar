@@ -6,11 +6,11 @@ export default defineEventHandler(async (event) => {
 			.knex('task')
 			.select('*')
 			.where((qb: Knex.QueryBuilder) => {
-				qb.where('isCompleted', 1);
+				qb.where('isCompleted', 1).whereRaw("datetime('now') <= datetime");
 			})
 			.orderBy([
-				{ column: 'priority', order: 'desc' },
 				{ column: 'datetime', order: 'asc' },
+				{ column: 'priority', order: 'desc' },
 			])
 			.limit(6);
 	} catch (error) {
