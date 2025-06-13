@@ -1,5 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+	const { params } = useRoute();
+	const { id } = params;
+	const { data } = useFetch(`/api/tasks/${id}`);
+</script>
 
 <template>
-	<div>asdf</div>
+	<div>{{ data }}</div>
 </template>
