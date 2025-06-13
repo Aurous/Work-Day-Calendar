@@ -1,5 +1,6 @@
 export default defineEventHandler(async (event) => {
 	try {
+		// const body = await readBody(event);
 		return event.context
 			.knex('task')
 			.where('id', getRouterParam(event, 'id'))
