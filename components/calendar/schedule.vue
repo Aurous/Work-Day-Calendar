@@ -117,14 +117,12 @@
 			totalHours += 1;
 		}
 		// how many possible periods are in hour
-		const splitPeriod = 64;
-		const totalTime = totalHours * splitPeriod;
+		const totalTime = totalHours * 60;
 		const totalColumnWidth = maxColumnWidth * 2 + 2;
 
 		return {
 			totalTime,
 			totalHours,
-			splitPeriod,
 			startingHour,
 			totalColumnWidth,
 			eventsWithColumns,
@@ -134,7 +132,6 @@
 	const {
 		totalTime = 0,
 		totalHours = 0,
-		splitPeriod = 0,
 		startingHour = 0,
 		totalColumnWidth = 0,
 		eventsWithColumns = [],
@@ -149,7 +146,7 @@
 		const hourShift = totalMinutes / 60 - startingHour;
 		// use totals and hourShift to cross multi to get starting row grid
 		const rowStart = (totalTime * hourShift) / totalHours + 1;
-		const span = interval.length('hours') * splitPeriod;
+		const span = interval.length('hours') * 60;
 
 		return {
 			backgroundColor: color,
@@ -174,7 +171,7 @@
 					class="flex place-items-center"
 					:class="index > 0 ? 'border-t' : ''"
 					:style="{
-						gridRow: `span ${splitPeriod}`,
+						gridRow: `span 60`,
 					}"
 				>
 					<div class="self-start pt-1 pl-2">
