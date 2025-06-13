@@ -25,175 +25,120 @@
 		column: number;
 	}
 
-	// this will change to a fetch
-	const eventsFetched = [
-		{
-			id: 1,
-			title: 'Meeting with Team',
-			startDT: '2025-06-07T09:30:00',
-			endDT: '2025-06-07T10:30:00',
-			color: '#342c4f',
-		},
-		{
-			id: 2,
-			title: 'Lunch Break',
-			startDT: '2025-06-07T12:00:00',
-			endDT: '2025-06-07T13:00:00',
-			color: '#3d2e5a',
-		},
-		{
-			id: 3,
-			title: 'Design Review',
-			startDT: '2025-06-07T15:15:00',
-			endDT: '2025-06-07T16:00:00',
-			color: '#2c2f4c',
-		},
-		{
-			id: 4,
-			title: 'Test',
-			startDT: '2025-06-07T10:30:00',
-			endDT: '2025-06-07T13:30:00',
-			color: '#443a64',
-		},
-		{
-			id: 5,
-			title: 'Test',
-			startDT: '2025-06-07T10:30:00',
-			endDT: '2025-06-07T11:30:00',
-			color: '#3a345a',
-		},
-		{
-			id: 6,
-			title: 'Test',
-			startDT: '2025-06-07T15:30:00',
-			endDT: '2025-06-07T16:30:00',
-			color: '#4b3c72',
-		},
-		{
-			id: 9,
-			title: 'Test',
-			startDT: '2025-06-07T13:00:00',
-			endDT: '2025-06-07T13:30:00',
-			color: '#102027',
-		},
-		{
-			id: 10,
-			title: 'Test',
-			startDT: '2025-06-07T13:30:00',
-			endDT: '2025-06-07T15:00:00',
-			color: '#5c4b87',
-		},
-		{
-			id: 11,
-			title: 'Test',
-			startDT: '2025-06-07T14:00:00',
-			endDT: '2025-06-07T16:30:00',
-			color: '#261d3d',
-		},
-	];
+	const { data } = await useFetch('/api/events/today');
 
-	// out of lazyness just update the day of the date times.
-	const day = DateTime.now().toFormat('d');
+	const scheduleData = computed(() => {
+		const events = data.value.map((event: eventBase): eventWithDateTime => {
+			const start = DateTime.fromISO(event.startDT);
+			const end = DateTime.fromISO(event.endDT);
+			const interval = Interval.fromDateTimes(start, end);
 
-	// inject luxon into events
-	const events = eventsFetched.map((event: eventBase): eventWithDateTime => {
-		const { startDT, endDT } = event;
+			return {
+				...event,
+				start,
+				end,
+				interval,
+			};
+		});
 
-		const start = DateTime.fromISO(startDT, {
-			zone: DateTime.local().zoneName,
-		}).set({ day });
-		const end = DateTime.fromISO(endDT, {
-			zone: DateTime.local().zoneName,
-		}).set({ day });
-		const interval = Interval.fromDateTimes(start, end);
+		const { assigned } = events
+			// map events into array of start and end times
+			.flatMap((event: eventWithDateTime): point[] => {
+				const { start, end } = event.interval;
+				if (!start || !end) return [];
+				return [
+					{ time: start, type: 'start', event },
+					{ time: end, type: 'end', event },
+				];
+			})
+			// sort based on time or type
+			.sort(
+				({ time: timeA, type }: point, { time: timeB }: point): number =>
+					timeA.valueOf() - timeB.valueOf() || (type === 'end' ? -1 : 1)
+			)
+			// calculate which times overlap
+			.reduce(
+				(state, { type, event: { id } }) => {
+					const { assigned, used, active } = state;
 
-		return {
-			...event,
-			start,
-			end,
-			interval,
-		};
-	});
+					if (type === 'start') {
+						let column = 1;
+						while (used.has(column)) column++;
+						assigned.set(id, column);
+						active.set(id, column);
+						used.add(column);
+					} else {
+						used.delete(active.get(id));
+						active.delete(id);
+					}
 
-	const { assigned } = events
-		// map events into array of start and end times
-		.flatMap((event: eventWithDateTime): point[] => {
-			const { start, end } = event.interval;
-			if (!start || !end) return [];
-			return [
-				{ time: start, type: 'start', event },
-				{ time: end, type: 'end', event },
-			];
-		})
-		// sort based on time or type
-		.sort(
-			({ time: timeA, type }: point, { time: timeB }: point): number =>
-				timeA.valueOf() - timeB.valueOf() || (type === 'end' ? -1 : 1)
-		)
-		// calculate which times overlap
-		.reduce(
-			(state, { type, event: { id } }) => {
-				const { assigned, used, active } = state;
-
-				if (type === 'start') {
-					let column = 1;
-					while (used.has(column)) column++;
-					assigned.set(id, column);
-					active.set(id, column);
-					used.add(column);
-				} else {
-					used.delete(active.get(id));
-					active.delete(id);
+					return state;
+				},
+				{
+					assigned: new Map(),
+					used: new Set(),
+					active: new Map(),
 				}
+			);
 
-				return state;
-			},
-			{
-				assigned: new Map(),
-				used: new Set(),
-				active: new Map(),
+		// Add column info to events
+		let maxColumnWidth = 1;
+		let lowestStartDT: DateTime = DateTime.local().endOf('day');
+		let highestEndDT: DateTime = DateTime.local().startOf('day');
+
+		// attach column onto event
+		const eventsWithColumns = events.map(
+			({ id, ...event }: eventWithDateTime): eventsWithColumn => {
+				const { start: s, end: e } = event;
+
+				const column = assigned.get(id);
+				if (column > maxColumnWidth) maxColumnWidth = column;
+				if (s < lowestStartDT) lowestStartDT = s;
+				if (e > highestEndDT) highestEndDT = e;
+
+				return {
+					id,
+					...event,
+					column,
+				};
 			}
 		);
 
-	// Add column info to events
-	let maxColumnWidth = 1;
-	let lowestStartDT: DateTime = DateTime.local().endOf('day');
-	let highestEndDT: DateTime = DateTime.local().startOf('day');
-
-	// attach column onto event
-	const eventsWithColumns = events.map(
-		({ id, ...event }: eventWithDateTime): eventsWithColumn => {
-			const { start: s, end: e } = event;
-
-			const column = assigned.get(id);
-			if (column > maxColumnWidth) maxColumnWidth = column;
-			if (s < lowestStartDT) lowestStartDT = s;
-			if (e > highestEndDT) highestEndDT = e;
-
-			return {
-				id,
-				...event,
-				column,
-			};
+		// get the hour of the lowest start
+		const startingHour = parseInt(lowestStartDT.toFormat('H')) - 1;
+		// get the difference between the lowest start and highest end
+		const totalDiff = Interval.fromDateTimes(lowestStartDT, highestEndDT);
+		// get the total difference in hours
+		let totalHours = Math.ceil(totalDiff.length('hours')) + 1 || 0;
+		// edge case - prevent odd scaling due to
+		//		for highest end not ending on the hour
+		// 		whole total hours
+		if (parseInt(highestEndDT.toFormat('m')) !== 0 && totalHours % 1 === 0) {
+			totalHours += 1;
 		}
-	);
+		// how many possible periods are in hour
+		const splitPeriod = 64;
+		const totalTime = totalHours * splitPeriod;
+		const totalColumnWidth = maxColumnWidth * 2 + 2;
 
-	// get the hour of the lowest start
-	const startingHour = parseInt(lowestStartDT.toFormat('H')) - 1;
-	// get the difference between the lowest start and highest end
-	const totalDiff = Interval.fromDateTimes(lowestStartDT, highestEndDT);
-	// get the total difference in hours
-	let totalHours = Math.ceil(totalDiff.length('hours')) + 2;
-	// edge case - prevent odd scaling due to
-	//		for highest end not ending on the hour
-	// 		whole total hours
-	if (parseInt(highestEndDT.toFormat('m')) !== 0 && totalHours % 1 === 0) {
-		totalHours += 1;
-	}
-	// TODO: move this to a setting
-	const splitPeriod = 4;
-	const totalTime = totalHours * splitPeriod;
-	const totalColumnWidth = maxColumnWidth * 2 + 2;
+		return {
+			totalTime,
+			totalHours,
+			splitPeriod,
+			startingHour,
+			totalColumnWidth,
+			eventsWithColumns,
+		};
+	});
+
+	const {
+		totalTime = 0,
+		totalHours = 0,
+		splitPeriod = 0,
+		startingHour = 0,
+		totalColumnWidth = 0,
+		eventsWithColumns = [],
+	} = scheduleData.value;
 
 	function getEventStyle({ start, interval, column, color }: eventsWithColumn) {
 		const [hours, minutes] = start
@@ -212,10 +157,6 @@
 			gridRow: `${rowStart} / span ${span}`,
 		};
 	}
-
-	onMounted(() => {
-		useSocket().on('update', (data) => console.log('we go data', data));
-	});
 </script>
 
 <template>
@@ -258,14 +199,15 @@
 				<div
 					v-for="event in eventsWithColumns"
 					:key="event.id"
-					class="col-span-2 border p-2 text-sm text-white"
+					class="col-span-2 border text-white"
 					:style="getEventStyle(event)"
 				>
+					<!-- TODO: Make this look better -->
 					<div class="truncate font-semibold">{{ event.title }}</div>
-					<div class="truncate text-xs">
+					<!-- <div class="truncate text-xs">
 						{{ event.start.toFormat('h:mma') }} -
 						{{ event.end.toFormat('h:mma') }}
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</div>

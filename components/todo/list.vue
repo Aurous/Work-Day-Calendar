@@ -24,13 +24,10 @@
 
 	const { data } = await useFetch(`/api/tasks/${api}`);
 	const tasks = ref(
-		data.value.map((task) => {
-			console.log(task);
-			return {
-				...task,
-				dueDate: DateTime.fromFormat(task.datetime, 'yyyy-MM-dd HH:mm:ss'),
-			};
-		})
+		data.value.map((task) => ({
+			...task,
+			dueDate: DateTime.fromFormat(task.datetime, 'yyyy-MM-dd HH:mm:ss'),
+		}))
 	);
 
 	function timeToRead(date: DateTime): string {
