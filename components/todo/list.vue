@@ -63,7 +63,16 @@
 			console.log('todo-add', data);
 		});
 		on('task-update', (data) => {
-			console.log('todo-edit', data);
+			const { id, datetime, ...task } = data;
+
+			const index = arr.findIndex(({ id: taskId }) => taskId === id);
+
+			tasks.value[index] = {
+				...task,
+				id,
+				datetime,
+				dueDate: DateTime.fromFormat(task.datetime, 'yyyy-MM-dd HH:mm:ss'),
+			};
 		});
 	});
 </script>

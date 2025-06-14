@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 const userSchema = z.object({
 	title: z.string(),
-	isCompleted: z.number(),
 	priority: z.number(),
 	datetime: z.string(),
 });
