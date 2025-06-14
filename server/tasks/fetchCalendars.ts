@@ -6,8 +6,7 @@ export default defineTask({
 	run(_event) {
 		console.log('calendar time');
 
-		const socket = getIO();
-		socket.emit('update', 'asdf');
+		getSocket().emit('update', 'asdf');
 
 		return { result: 'Success' };
 	},

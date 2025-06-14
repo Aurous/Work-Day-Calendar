@@ -12,8 +12,8 @@ export default defineEventHandler(async (event) => {
 		const body = await readBody(event);
 		const validatedData = userSchema.parse(body);
 
-		const existing = await event.context.knex('task').where({ id }).first();
-		if (!existing) {
+		let model = await event.context.knex('task').where({ id }).first();
+		if (!model) {
 			throw createError({
 				statusCode: 404,
 				statusMessage: 'Task not found',
@@ -22,11 +22,8 @@ export default defineEventHandler(async (event) => {
 
 		// Compare existing with validatedData
 		const hasChanges = Object.entries(validatedData).some(
-			([key, value]) => existing[key] !== value
+			([key, value]) => model[key] !== value
 		);
-
-		let model = existing;
-
 		if (hasChanges) {
 			// Perform update
 			[model] = await event.context
@@ -34,8 +31,7 @@ export default defineEventHandler(async (event) => {
 				.where({ id })
 				.update(validatedData, '*');
 
-			const socket = getIO();
-			socket.emit('task-update', model);
+			getSocket().emit('task');
 		}
 
 		return model;

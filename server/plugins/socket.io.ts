@@ -7,7 +7,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
 	const engine = new Engine();
 	const io = new Server();
 
-	setIO(io);
+	setSocket(io);
 
 	io.bind(engine);
 

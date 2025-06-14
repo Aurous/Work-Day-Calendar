@@ -22,8 +22,8 @@
 		'border-[#b9192e]',
 	];
 
-	const { data } = await useFetch(`/api/tasks/${api}`);
-	const tasks = ref(
+	const { data, execute } = await useFetch(`/api/tasks/${api}`);
+	const tasks = computed(() =>
 		data.value.map((task) => ({
 			...task,
 			dueDate: DateTime.fromFormat(task.datetime, 'yyyy-MM-dd HH:mm:ss'),
@@ -56,24 +56,7 @@
 
 	onMounted(() => {
 		const { on } = useSocket();
-		on('task-remove', (data) => {
-			console.log('todo-remove', data);
-		});
-		on('task-add', (data) => {
-			console.log('todo-add', data);
-		});
-		on('task-update', (data) => {
-			const { id, datetime, ...task } = data;
-
-			const index = arr.findIndex(({ id: taskId }) => taskId === id);
-
-			tasks.value[index] = {
-				...task,
-				id,
-				datetime,
-				dueDate: DateTime.fromFormat(task.datetime, 'yyyy-MM-dd HH:mm:ss'),
-			};
-		});
+		on('task', () => execute());
 	});
 </script>
 
