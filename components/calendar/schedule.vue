@@ -154,8 +154,9 @@
 
 		return {
 			backgroundColor: color,
-			gridColumnStart: column * 2,
 			gridRow: `${rowStart} / span ${span}`,
+			gridColumn: `${column * 2} / span ${2}`,
+			fontSize: span < 30 ? 'var(--text-xs)' : 'var(--text-md)',
 		};
 	}
 </script>
@@ -200,15 +201,14 @@
 				<div
 					v-for="event in eventsWithColumns"
 					:key="event.id"
-					class="col-span-2 border text-white"
+					class="flex justify-between rounded-sm border p-2 text-white"
 					:style="getEventStyle(event)"
 				>
 					<!-- TODO: Make this look better -->
-					<div class="truncate font-semibold">{{ event.title }}</div>
-					<!-- <div class="truncate text-xs">
-						{{ event.start.toFormat('h:mma') }} -
-						{{ event.end.toFormat('h:mma') }}
-					</div> -->
+					<div class="truncate">{{ event.title }}</div>
+					<div>
+						{{ event.start.toFormat('h:mma') }}
+					</div>
 				</div>
 			</div>
 		</div>
