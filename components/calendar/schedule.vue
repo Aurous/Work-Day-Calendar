@@ -29,10 +29,17 @@
 
 	const scheduleData = computed(() => {
 		const events = data.value.map((event: eventBase): eventWithDateTime => {
-			const start = DateTime.fromISO(event.startDT);
-			const end = DateTime.fromISO(event.endDT);
+			const start = DateTime.fromISO(event.startDT, {
+				zone: DateTime.local().zoneName,
+			});
+			const end = DateTime.fromISO(event.endDT, {
+				zone: DateTime.local().zoneName,
+			});
 			const interval = Interval.fromDateTimes(start, end);
-
+			console.log(
+				start.toFormat('yyyy-MM-dd HH:mm:ss'),
+				end.toFormat('yyyy-MM-dd HH:mm:ss')
+			);
 			return {
 				...event,
 				start,
@@ -85,6 +92,10 @@
 		let maxColumnWidth = 1;
 		let lowestStartDT: DateTime = DateTime.local().endOf('day');
 		let highestEndDT: DateTime = DateTime.local().startOf('day');
+		console.log(
+			lowestStartDT.toFormat('yyyy-MM-dd HH:mm:ss'),
+			highestEndDT.toFormat('yyyy-MM-dd HH:mm:ss')
+		);
 
 		// attach column onto event
 		const eventsWithColumns = events.map(
@@ -105,6 +116,7 @@
 		);
 
 		// get the hour of the lowest start
+		console.log('lowestStartDT', lowestStartDT);
 		const startingHour = parseInt(lowestStartDT.toFormat('H')) - 1;
 		// get the difference between the lowest start and highest end
 		const totalDiff = Interval.fromDateTimes(lowestStartDT, highestEndDT);

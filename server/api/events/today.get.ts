@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
 			.knex('event')
 			.select('*')
 			.where((qb: Knex.QueryBuilder) => {
-				qb.whereRaw("date(startDT) = date('now')");
+				qb.whereRaw("date(startDT, 'localtime') = date('now',  'localtime')");
 			});
 	} catch (error) {
 		throw createError({

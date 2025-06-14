@@ -53,6 +53,19 @@
 
 		return 'Seconds ago';
 	}
+
+	onMounted(() => {
+		const { on } = useSocket();
+		on('task-remove', (data) => {
+			console.log('todo-remove', data);
+		});
+		on('task-add', (data) => {
+			console.log('todo-add', data);
+		});
+		on('task-update', (data) => {
+			console.log('todo-edit', data);
+		});
+	});
 </script>
 
 <template>

@@ -41,17 +41,6 @@
 				}
 			}
 		}, 100);
-
-		const { on } = useSocket();
-		on('todo-remove', () => {
-			console.log('todo-remove');
-		});
-		on('todo-add', () => {
-			console.log('todo-add');
-		});
-		on('todo-edit', () => {
-			console.log('todo-edit');
-		});
 	});
 
 	onBeforeUnmount(() => {
