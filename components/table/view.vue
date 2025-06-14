@@ -63,14 +63,7 @@
 		}
 	);
 	// run the data execute when the query has changed
-	watch(
-		query,
-		(newData) => {
-			console.log(newData);
-			execute();
-		},
-		{ deep: true }
-	);
+	watch(query, (newData) => execute(), { deep: true });
 	// make sure to update the query when changing the sort
 	watch(
 		sorting,
