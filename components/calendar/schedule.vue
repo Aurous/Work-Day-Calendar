@@ -28,107 +28,81 @@
 	const { data } = await useFetch('/api/events/today');
 
 	const scheduleData = computed(() => {
-		const events = data.value.map((event: eventBase): eventWithDateTime => {
-			const start = DateTime.fromISO(event.startDT, {
-				zone: DateTime.local().zoneName,
-			});
-			const end = DateTime.fromISO(event.endDT, {
-				zone: DateTime.local().zoneName,
-			});
-			const interval = Interval.fromDateTimes(start, end);
-
-			return {
-				...event,
-				start,
-				end,
-				interval,
-			};
-		});
-
-		const { assigned } = events
-			// map events into array of start and end times
-			.flatMap((event: eventWithDateTime): point[] => {
-				const { start, end } = event.interval;
-				if (!start || !end) return [];
-				return [
-					{ time: start, type: 'start', event },
-					{ time: end, type: 'end', event },
-				];
+		const points = data.value
+			.map((event: eventBase): eventWithDateTime => {
+				const start = DateTime.fromISO(event.startDT, {
+					zone: DateTime.local().zoneName,
+				});
+				const end = DateTime.fromISO(event.endDT, {
+					zone: DateTime.local().zoneName,
+				});
+				return {
+					...event,
+					start,
+					end,
+					interval: Interval.fromDateTimes(start, end),
+				};
 			})
-			// sort based on time or type
+			.flatMap((event) => [
+				{ time: event.start, type: 'start' as const, event },
+				{ time: event.end, type: 'end' as const, event },
+			])
 			.sort(
-				({ time: timeA, type }: point, { time: timeB }: point): number =>
+				({ time: timeA, type }, { time: timeB }) =>
 					timeA.valueOf() - timeB.valueOf() || (type === 'end' ? -1 : 1)
-			)
-			// calculate which times overlap
-			.reduce(
-				(state, { type, event: { id } }) => {
-					const { assigned, used, active } = state;
-
-					if (type === 'start') {
-						let column = 1;
-						while (used.has(column)) column++;
-						assigned.set(id, column);
-						active.set(id, column);
-						used.add(column);
-					} else {
-						used.delete(active.get(id));
-						active.delete(id);
-					}
-
-					return state;
-				},
-				{
-					assigned: new Map(),
-					used: new Set(),
-					active: new Map(),
-				}
 			);
 
-		// Add column info to events
+		const used = new Set<number>();
+		const active = new Map<number, number>();
+
 		let maxColumnWidth = 1;
-		let lowestStartDT: DateTime = DateTime.local().endOf('day');
-		let highestEndDT: DateTime = DateTime.local().startOf('day');
+		let lowestStartDT = DateTime.local().endOf('day');
+		let highestEndDT = DateTime.local().startOf('day');
 
-		// attach column onto event
-		const eventsWithColumns = events.map(
-			({ id, ...event }: eventWithDateTime): eventsWithColumn => {
-				const { start: s, end: e } = event;
+		const eventsWithColumns: eventsWithColumn[] = [];
 
-				const column = assigned.get(id);
+		for (const point of points) {
+			const id = point.event.id;
+			// TODO: get the total number of column to span events
+			if (point.type === 'start') {
+				// Assign next free column
+				let column = 1;
+				while (used.has(column)) column++;
+				used.add(column);
+				active.set(id, column);
+
+				// Track bounds
+				if (point.time < lowestStartDT) lowestStartDT = point.time;
+				if (point.event.end > highestEndDT) highestEndDT = point.event.end;
 				if (column > maxColumnWidth) maxColumnWidth = column;
-				if (s < lowestStartDT) lowestStartDT = s;
-				if (e > highestEndDT) highestEndDT = e;
 
-				return {
-					id,
-					...event,
+				// Store event with column
+				eventsWithColumns.push({
+					...point.event,
 					column,
-				};
+				});
+			} else {
+				const column = active.get(id);
+				used.delete(column);
+				active.delete(id);
 			}
-		);
+		}
 
-		// get the hour of the lowest start
-		const startingHour = parseInt(lowestStartDT.toFormat('H')) - 1;
-		// get the difference between the lowest start and highest end
+		// Get the total difference in hours
 		const totalDiff = Interval.fromDateTimes(lowestStartDT, highestEndDT);
-		// get the total difference in hours
-		let totalHours = Math.ceil(totalDiff.length('hours')) + 1 || 0;
+		let totalHours = Math.ceil(totalDiff.length('hours')) + 1;
 		// edge case - prevent odd scaling due to
 		//		for highest end not ending on the hour
 		// 		whole total hours
-		if (parseInt(highestEndDT.toFormat('m')) !== 0 && totalHours % 1 === 0) {
+		if (highestEndDT.minute !== 0 && totalHours % 1 === 0) {
 			totalHours += 1;
 		}
-		// how many possible periods are in hour
-		const totalTime = totalHours * 60;
-		const totalColumnWidth = maxColumnWidth * 2 + 2;
 
 		return {
-			totalTime,
+			totalTime: totalHours * 60,
 			totalHours,
-			startingHour,
-			totalColumnWidth,
+			startingHour: parseInt(lowestStartDT.toFormat('H')) - 1,
+			totalColumnWidth: maxColumnWidth * 2 + 2,
 			eventsWithColumns,
 		};
 	});
@@ -151,12 +125,12 @@
 		// use totals and hourShift to cross multi to get starting row grid
 		const rowStart = (totalTime * hourShift) / totalHours + 1;
 		const span = interval.length('hours') * 60;
-
+		// TODO: add a setting to span the events across the whole area
 		return {
 			backgroundColor: color,
 			gridRow: `${rowStart} / span ${span}`,
 			gridColumn: `${column * 2} / span ${2}`,
-			fontSize: span < 30 ? 'var(--text-xs)' : 'var(--text-md)',
+			fontSize: span < 30 ? 'var(--text-sm)' : 'var(--text-md)',
 		};
 	}
 </script>
