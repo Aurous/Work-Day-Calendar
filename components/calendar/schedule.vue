@@ -83,7 +83,16 @@
 				}
 
 				return events;
-			}, []);
+			}, [])
+			.map((event, _index, events) => ({
+				...event,
+				hasOverlap: events.some(
+					(other) =>
+						other.id !== event.id &&
+						event.start < other.end &&
+						other.start < event.end
+				),
+			}));
 
 		// Get the total difference in hours
 		const totalDiff = Interval.fromDateTimes(lowestStartDT, highestEndDT);
@@ -114,7 +123,7 @@
 	} = scheduleData.value;
 
 	function getEventStyle(event: eventsWithColumn) {
-		const { id, start, end, interval, column, color } = event;
+		const { id, start, end, interval, column, color, hasOverlap } = event;
 		const [hours, minutes] = start
 			.toFormat('H:m')
 			.split(':')
@@ -128,13 +137,7 @@
 		let colSpan = 2;
 		const pref = true;
 		// TODO: move this to a preference
-		if (pref) {
-			// Check if ANY other events overlap
-			const isOverlapped = events.some(
-				(other) => other.id !== id && start < other.end && other.start < end
-			);
-			if (!isOverlapped) colSpan = totalColumnWidth - 2;
-		}
+		if (pref && !hasOverlap) colSpan = totalColumnWidth - 2;
 
 		return {
 			backgroundColor: color,
@@ -190,7 +193,7 @@
 				>
 					<!-- TODO: Make this look better -->
 					<div class="truncate">{{ event.title }}</div>
-					<div>
+					<div class="truncate">
 						{{ event.start.toFormat('h:mma') }}
 					</div>
 				</div>
