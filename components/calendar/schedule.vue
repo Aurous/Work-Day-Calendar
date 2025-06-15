@@ -138,12 +138,15 @@
 		const pref = true;
 		// TODO: move this to a preference
 		if (pref && !hasOverlap) colSpan = totalColumnWidth - 2;
+		const fontSize = span < 30 ? 'xs' : 'md';
+		const padding = span < 30 ? 0 : 2;
 
 		return {
 			backgroundColor: color,
 			gridRow: `${rowStart} / span ${span}`,
 			gridColumn: `${column * 2} / span ${colSpan}`,
-			fontSize: span < 30 ? 'var(--text-xs)' : 'var(--text-md)',
+			fontSize: `var(--text-${fontSize})`,
+			padding: `calc(var(--spacing) * ${padding})`,
 		};
 	}
 </script>
@@ -188,7 +191,7 @@
 				<div
 					v-for="event in events"
 					:key="event.id"
-					class="flex justify-between rounded-sm border p-2 text-white"
+					class="flex justify-between overflow-hidden rounded-sm border text-white"
 					:style="getEventStyle(event)"
 				>
 					<!-- TODO: Make this look better -->
