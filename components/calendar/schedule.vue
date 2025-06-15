@@ -28,30 +28,6 @@
 	const { data } = await useFetch('/api/events/today');
 
 	const scheduleData = computed(() => {
-		const points = data.value
-			.map((event: eventBase): eventWithDateTime => {
-				const start = DateTime.fromISO(event.startDT, {
-					zone: DateTime.local().zoneName,
-				});
-				const end = DateTime.fromISO(event.endDT, {
-					zone: DateTime.local().zoneName,
-				});
-				return {
-					...event,
-					start,
-					end,
-					interval: Interval.fromDateTimes(start, end),
-				};
-			})
-			.flatMap((event) => [
-				{ time: event.start, type: 'start' as const, event },
-				{ time: event.end, type: 'end' as const, event },
-			])
-			.sort(
-				({ time: timeA, type }, { time: timeB }) =>
-					timeA.valueOf() - timeB.valueOf() || (type === 'end' ? -1 : 1)
-			);
-
 		const used = new Set<number>();
 		const active = new Map<number, number>();
 
@@ -59,34 +35,57 @@
 		let lowestStartDT = DateTime.local().endOf('day');
 		let highestEndDT = DateTime.local().startOf('day');
 
-		const eventsWithColumns: eventsWithColumn[] = [];
-
-		for (const point of points) {
-			const id = point.event.id;
-			// TODO: get the total number of column to span events
-			if (point.type === 'start') {
-				// Assign next free column
-				let column = 1;
-				while (used.has(column)) column++;
-				used.add(column);
-				active.set(id, column);
-
-				// Track bounds
-				if (point.time < lowestStartDT) lowestStartDT = point.time;
-				if (point.event.end > highestEndDT) highestEndDT = point.event.end;
-				if (column > maxColumnWidth) maxColumnWidth = column;
-
-				// Store event with column
-				eventsWithColumns.push({
-					...point.event,
-					column,
+		const events = data.value
+			.flatMap((data: eventBase): point => {
+				const start = DateTime.fromISO(data.startDT, {
+					zone: DateTime.local().zoneName,
 				});
-			} else {
-				const column = active.get(id);
-				used.delete(column);
-				active.delete(id);
-			}
-		}
+				const end = DateTime.fromISO(data.endDT, {
+					zone: DateTime.local().zoneName,
+				});
+				const event = {
+					...data,
+					start,
+					end,
+					interval: Interval.fromDateTimes(start, end),
+				};
+				return [
+					{ time: event.start, type: 'start' as const, event },
+					{ time: event.end, type: 'end' as const, event },
+				];
+			})
+			.sort(
+				({ time: timeA, type }, { time: timeB }) =>
+					timeA.valueOf() - timeB.valueOf() || (type === 'end' ? -1 : 1)
+			)
+			.reduce((events, { event, type, time }) => {
+				const { id, end } = event;
+				// TODO: get the total number of column to span events
+				if (type === 'start') {
+					// Assign next free column
+					let column = 1;
+					while (used.has(column)) column++;
+					used.add(column);
+					active.set(id, column);
+
+					// Track bounds
+					if (time < lowestStartDT) lowestStartDT = time;
+					if (end > highestEndDT) highestEndDT = end;
+					if (column > maxColumnWidth) maxColumnWidth = column;
+
+					// Store event with column
+					events.push({
+						...event,
+						column,
+					});
+				} else {
+					const column = active.get(id);
+					used.delete(column);
+					active.delete(id);
+				}
+
+				return events;
+			}, []);
 
 		// Get the total difference in hours
 		const totalDiff = Interval.fromDateTimes(lowestStartDT, highestEndDT);
@@ -103,7 +102,7 @@
 			totalHours,
 			startingHour: parseInt(lowestStartDT.toFormat('H')) - 1,
 			totalColumnWidth: maxColumnWidth * 2 + 2,
-			eventsWithColumns,
+			eventsWithColumns: events,
 		};
 	});
 
