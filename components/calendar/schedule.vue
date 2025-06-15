@@ -143,7 +143,7 @@
 			backgroundColor: color,
 			gridRow: `${rowStart} / span ${span}`,
 			gridColumn: `${column * 2} / span ${colSpan}`,
-			fontSize: span < 30 ? 'var(--text-sm)' : 'var(--text-md)',
+			fontSize: span < 30 ? 'var(--text-xs)' : 'var(--text-md)',
 		};
 	}
 </script>
@@ -192,6 +192,7 @@
 					:style="getEventStyle(event)"
 				>
 					<!-- TODO: Make this look better -->
+					<!-- TODO: short times look bad -->
 					<div class="truncate">{{ event.title }}</div>
 					<div class="truncate">
 						{{ event.start.toFormat('h:mma') }}
