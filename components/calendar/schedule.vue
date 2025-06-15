@@ -60,22 +60,20 @@
 			)
 			.reduce((events, { event, type, time }) => {
 				const { id, end } = event;
-				// TODO: get the total number of column to span events
 				if (type === 'start') {
 					// Assign next free column
 					let column = 1;
 					while (used.has(column)) column++;
 					used.add(column);
 					active.set(id, column);
-
 					// Track bounds
 					if (time < lowestStartDT) lowestStartDT = time;
 					if (end > highestEndDT) highestEndDT = end;
 					if (column > maxColumnWidth) maxColumnWidth = column;
-
 					// Store event with column
 					events.push({
 						...event,
+						size: active.size,
 						column,
 					});
 				} else {
@@ -102,7 +100,7 @@
 			totalHours,
 			startingHour: parseInt(lowestStartDT.toFormat('H')) - 1,
 			totalColumnWidth: maxColumnWidth * 2 + 2,
-			eventsWithColumns: events,
+			events,
 		};
 	});
 
@@ -111,24 +109,36 @@
 		totalHours = 0,
 		startingHour = 0,
 		totalColumnWidth = 0,
-		eventsWithColumns = [],
+		events = [],
 	} = scheduleData.value;
 
-	function getEventStyle({ start, interval, column, color }: eventsWithColumn) {
+	function getEventStyle(event: eventsWithColumn) {
+		const { id, start, end, interval, column, color } = event;
 		const [hours, minutes] = start
 			.toFormat('H:m')
 			.split(':')
 			.map((key) => parseInt(key));
 		const totalMinutes = hours * 60 + minutes;
 		const hourShift = totalMinutes / 60 - startingHour;
-		// use totals and hourShift to cross multi to get starting row grid
+		// use totals and hourShift to cross multiply to get starting row grid
 		const rowStart = (totalTime * hourShift) / totalHours + 1;
 		const span = interval.length('hours') * 60;
-		// TODO: add a setting to span the events across the whole area
+
+		let colSpan = 2;
+		const pref = true;
+		// TODO: move this to a preference
+		if (pref) {
+			// Check if ANY other events overlap
+			const isOverlapped = events.some(
+				(other) => other.id !== id && start < other.end && other.start < end
+			);
+			if (!isOverlapped) colSpan = totalColumnWidth - 2;
+		}
+
 		return {
 			backgroundColor: color,
 			gridRow: `${rowStart} / span ${span}`,
-			gridColumn: `${column * 2} / span ${2}`,
+			gridColumn: `${column * 2} / span ${colSpan}`,
 			fontSize: span < 30 ? 'var(--text-sm)' : 'var(--text-md)',
 		};
 	}
@@ -172,7 +182,7 @@
 				}"
 			>
 				<div
-					v-for="event in eventsWithColumns"
+					v-for="event in events"
 					:key="event.id"
 					class="flex justify-between rounded-sm border p-2 text-white"
 					:style="getEventStyle(event)"
