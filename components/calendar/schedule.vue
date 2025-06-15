@@ -139,14 +139,16 @@
 		// TODO: move this to a preference
 		if (pref && !hasOverlap) colSpan = totalColumnWidth - 2;
 		const fontSize = span < 30 ? 'xs' : 'md';
-		const padding = span < 30 ? 0 : 2;
+		const padding = span < 30 ? 0.25 : 2;
 
 		return {
 			backgroundColor: color,
 			gridRow: `${rowStart} / span ${span}`,
 			gridColumn: `${column * 2} / span ${colSpan}`,
 			fontSize: `var(--text-${fontSize})`,
-			padding: `calc(var(--spacing) * ${padding})`,
+			paddingLeft: `calc(var(--spacing) * 2)`,
+			paddingRight: `calc(var(--spacing) * 2)`,
+			paddingTop: `calc(var(--spacing) * ${padding})`,
 		};
 	}
 </script>
@@ -191,14 +193,15 @@
 				<div
 					v-for="event in events"
 					:key="event.id"
-					class="flex justify-between overflow-hidden rounded-sm border text-white"
+					class="flex justify-between truncate rounded-sm border text-white"
 					:style="getEventStyle(event)"
 				>
-					<!-- TODO: Make this look better -->
-					<!-- TODO: short times look bad -->
-					<div class="truncate">{{ event.title }}</div>
-					<div class="truncate">
-						{{ event.start.toFormat('h:mma') }}
+					<div class="truncate leading-tight font-semibold">
+						{{ event.title }}
+					</div>
+					<div class="truncate leading-tight opacity-80">
+						{{ event.start.toFormat('h:mma') }} -
+						{{ event.end.toFormat('h:mma') }}
 					</div>
 				</div>
 			</div>
