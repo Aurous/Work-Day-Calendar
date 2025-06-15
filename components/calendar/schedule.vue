@@ -87,7 +87,8 @@
 
 		// Get the total difference in hours
 		const totalDiff = Interval.fromDateTimes(lowestStartDT, highestEndDT);
-		let totalHours = Math.ceil(totalDiff.length('hours')) + 1;
+		// TODO: figure out this edge case with needing + 2 instead of + 1
+		let totalHours = Math.ceil(totalDiff.length('hours')) + 2;
 		// edge case - prevent odd scaling due to
 		//		for highest end not ending on the hour
 		// 		whole total hours
