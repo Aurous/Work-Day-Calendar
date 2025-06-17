@@ -96,14 +96,13 @@
 
 		// Get the total difference in hours
 		const totalDiff = Interval.fromDateTimes(lowestStartDT, highestEndDT);
-		// TODO: figure out this edge case with needing + 2 instead of + 1
-		let totalHours = Math.ceil(totalDiff.length('hours')) + 2;
-		// edge case - prevent odd scaling due to
-		//		for highest end not ending on the hour
-		// 		whole total hours
-		if (highestEndDT.minute !== 0 && totalHours % 1 === 0) {
-			totalHours += 1;
-		}
+		// == calculate how much time should be used in the display
+		// add 3 hours to offset to ensure that we have space around
+		// the edge
+		let totalHours = Math.floor(totalDiff.length('hours')) + 3;
+		// but if the total difference does not have a remainder
+		// we know that the time should be 1 hour on either side
+		if (totalDiff.length('hours') % 1 === 0) totalHours -= 1;
 
 		return {
 			totalTime: totalHours * 60,
