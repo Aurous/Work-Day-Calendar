@@ -4,7 +4,7 @@ export default defineTask({
 		description: 'Get all calendar information',
 	},
 	run(_event) {
-		getSocket().emit('update', 'asdf');
+		getSocket().emit('calendar');
 
 		return { result: 'Success' };
 	},
